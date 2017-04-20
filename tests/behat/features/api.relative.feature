@@ -77,7 +77,7 @@ Feature: Behat relative assertions work
   @javascript @phpserver
   Scenario: Assert that visually visible component is visible
     Given I am on the test page
-    Then I see top
+    Then I see visible top
     And I save screenshot
 
   @javascript @phpserver
@@ -97,7 +97,7 @@ Feature: Behat relative assertions work
     Given I am on the test page
     And I don't see overlay
     When I click on overlay trigger
-    Then I see overlay
+    Then I see visible  overlay
     And I save screenshot
 
   @javascript @phpserver
@@ -106,7 +106,7 @@ Feature: Behat relative assertions work
     And I am on the test page
     And I don't see off-canvas overlay
     When I click on off-canvas overlay trigger
-    Then I see off-canvas overlay
+    Then I see visible off-canvas overlay
     And I save screenshot
 
   @javascript @phpserver

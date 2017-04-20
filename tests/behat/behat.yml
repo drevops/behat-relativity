@@ -1,0 +1,45 @@
+default:
+  suites:
+    default:
+      contexts:
+        - IntegratedExperts\BehatPhpServer\PhpServerContext:
+          -
+            docroot: %paths.base%/features/fixtures
+        - IntegratedExperts\BehatScreenshot\ScreenshotContext:
+          -
+            dir: %paths.base%/features/screenshots
+            dateTimeZone: Australia/Melbourne
+            dateFormat: d-m-Y_H-i-s
+        - IntegratedExperts\BehatRelativity\RelativityContext:
+          -
+            browser_breakpoints:
+              mobile:
+                width: 320
+                height: 480
+              tablet:
+                width: 768
+                height: 1024
+              desktop:
+                width: 992
+                height: 1024
+                default: true
+              desktop_large:
+                width: 1200
+                height: 900
+            # Vertical offset due to the height of the sticky nav.
+            offset: 60
+            components:
+              # Generic/re-usable components.
+              'page': "#page"
+                
+  extensions:
+    Behat\MinkExtension:
+      base_url: "http://localhost:8888/"
+      browser_name: chrome
+      files_path: ./features/fixtures
+      default_session: selenium2
+      goutte: ~
+      selenium2:
+        wd_host: "http://0.0.0.1:4444/wd/hub"
+        capabilities: { "browser": "chrome", "version": "*" }
+      javascript_session: selenium2
