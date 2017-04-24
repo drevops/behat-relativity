@@ -19,6 +19,7 @@
     "behat/mink-extension": "~v2.2",
     "behat/mink-goutte-driver": "*",
     "behat/mink-selenium2-driver": "*",
+    "behat/mink-browserkit-driver": "^1.3",
     "integratedexperts/behat-phpserver": "^0.1.0",
     "integratedexperts/behat-screenshot": "^0.1.0"
   },
