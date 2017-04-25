@@ -8,13 +8,13 @@
 namespace IntegratedExperts\BehatRelativity;
 
 use Behat\Gherkin\Node\TableNode;
-use Behat\MinkExtension\Context\MinkContext;
-use Behat\Behat\Context\SnippetAcceptingContext;
+use Behat\MinkExtension\Context\RawMinkContext;
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 
 /**
  * Class RelativeTrait.
  */
-class RelativityContext extends MinkContext implements SnippetAcceptingContext
+class RelativityContext extends RawMinkContext
 {
 
   /**
@@ -35,6 +35,13 @@ class RelativityContext extends MinkContext implements SnippetAcceptingContext
     protected $offset;
 
   /**
+   * Array of screen size.
+   *
+   * @var array
+   */
+    protected $breakpoints;
+
+  /**
    * Constructor.
    *
    * @param array $parameters Settings for constructor.
@@ -43,55 +50,59 @@ class RelativityContext extends MinkContext implements SnippetAcceptingContext
     {
         $this->components = isset($parameters['components']) ? $parameters['components'] : ['page' => "#page"];
         $this->offset = isset($parameters['offset']) ? $parameters['offset'] : 0;
+        $this->breakpoints = isset($parameters['breakpoints']) ? $parameters['breakpoints'] : ['desktop' => ['width' => 992, 'height' => 1024, 'default' => true]];
     }
 
   /**
-   * Go to the test page.
+   * Init values required for relativity context.
    *
-   * This is to test the framework itself.
+   * @param BeforeScenarioScope $scope Scenario scope.
    *
-   * @Given /^(?:|I )am on (?:|the )test page$/
-   * @When /^(?:|I )go to (?:|the )test page$/
+   * @BeforeScenario
    */
-    public function goToRelativeTestPage()
+    public function beforeScenarioRelativityInit(BeforeScenarioScope $scope)
     {
-        $this->visit('http://localhost:8888/relative/relative.html');
+        $defaultScreenSize = [];
+        foreach ($this->breakpoints as $breakpoint) {
+            if (isset($breakpoint['default']) && $breakpoint['default'] === true) {
+                $defaultScreenSize = $breakpoint;
+            }
+        }
 
-        // Components from fixture are known from the structure of the relative.html
-        // file.
-        $this->components = array_merge($this->components, [
-            'main' => '#main',
-            'top' => '#top',
-            'bottom' => '#bottom',
-            'left' => '#left',
-            'right' => '#right',
-            'main inner' => '#main-inner',
-            'hidden' => '#hidden',
-            'missing' => '#non-existing',
-            'off-canvas left' => '#off-canvas-left',
-            'off-canvas right' => '#off-canvas-right',
-            'off-canvas top' => '#off-canvas-top',
-            'off-canvas bottom' => '#off-canvas-bottom',
-            'sr only' => '#sr-only',
-            'sr only shown' => '#sr-only-shown',
-            'overlay' => '#overlay',
-            'overlay trigger' => '#overlay-trigger',
-            'off-canvas overlay' => '#overlay-off-canvas',
-            'off-canvas overlay trigger' => '#overlay-off-canvas-trigger',
-            'over-bottom' => '#over-bottom',
-            'over-inside' => '#over-inside',
-            'over-inside inner' => '#over-inside-inner',
-            'over-outside' => '#over-outside',
-            'over-outside inner' => '#over-outside-inner',
-            'over-intersect' => '#over-intersect',
-            'over-intersect inner' => '#over-intersect-inner',
-            'over-cover' => '#over-cover',
-            'over-cover inner' => '#over-cover-inner',
-            'over-fixed' => '#over-fixed',
-            'over-fixed inner' => '#over-fixed-inner',
-            'over-under' => '#over-under',
-            'over-under inner' => '#over-under-inner',
-        ]);
+        if (count($defaultScreenSize) > 0) {
+            $this->getSession()->resizeWindow($defaultScreenSize['width'], $defaultScreenSize['height'], 'current');
+        }
+    }
+
+  /**
+   * Change screen size.
+   *
+   * @param string $screen name of screen size.
+   *
+   * @Given /^I am viewing the site on a ([a-zA-Z0-9\s,]+) device$/
+   */
+    public function iAmViewingTheSiteOnDevice($screen)
+    {
+        $errors = [];
+
+        try {
+            $this->getSession()->resizeWindow($this->breakpoints[$screen]['width'], $this->breakpoints[$screen]['height'], 'current');
+        } catch (\Exception $e) {
+            if (!isset($this->breakpoints[$screen])) {
+                $errors[] = sprintf("Screen size '%s' is not defined in behat.yml", $screen);
+            } else {
+                if (!isset($this->breakpoints[$screen]['width'])) {
+                    $errors[] = sprintf("Screen size '%s' parameter 'width' is not defined in behat.yml", $screen);
+                }
+                if (!isset($this->breakpoints[$screen]['height'])) {
+                    $errors[] = sprintf("Screen size '%s' parameter 'height' is not defined in behat.yml", $screen);
+                }
+            }
+        }
+
+        if (count($errors) > 0) {
+            throw new \Exception(implode("\n", $errors));
+        }
     }
 
   /**
@@ -104,9 +115,9 @@ class RelativityContext extends MinkContext implements SnippetAcceptingContext
    *
    * @Then /^I see ([a-zA-Z0-9\s,]+) above ([a-zA-Z0-9\s,\-]+)$/
    */
-    public function assertRelativeAbove($subject, $others)
+    public function assertAbove($subject, $others)
     {
-        return $this->relativeDispatcher('above', $subject, $others);
+        $this->dispatcher('above', $subject, $others);
     }
 
   /**
@@ -119,9 +130,9 @@ class RelativityContext extends MinkContext implements SnippetAcceptingContext
    *
    * @Then /^I see ([a-zA-Z0-9\s,]+) below ([a-zA-Z0-9\s,\-]+)$/
    */
-    public function assertRelativeBelow($subject, $others)
+    public function assertBelow($subject, $others)
     {
-        return $this->relativeDispatcher('below', $subject, $others);
+        $this->dispatcher('below', $subject, $others);
     }
 
   /**
@@ -134,9 +145,9 @@ class RelativityContext extends MinkContext implements SnippetAcceptingContext
    *
    * @Then /^I see ([a-zA-Z0-9\s,]+) to (?:|the\s)left of ([a-zA-Z0-9\s,]+)$/
    */
-    public function assertRelativeLeft($subject, $others)
+    public function assertLeft($subject, $others)
     {
-        return $this->relativeDispatcher('left', $subject, $others);
+        $this->dispatcher('left', $subject, $others);
     }
 
   /**
@@ -149,9 +160,9 @@ class RelativityContext extends MinkContext implements SnippetAcceptingContext
    *
    * @Then /^I see ([a-zA-Z0-9\s,]+) to (?:|the\s)right of ([a-zA-Z0-9\s,]+)$/
    */
-    public function assertRelativeRight($subject, $others)
+    public function assertRight($subject, $others)
     {
-        return $this->relativeDispatcher('right', $subject, $others);
+        $this->dispatcher('right', $subject, $others);
     }
 
   /**
@@ -164,9 +175,9 @@ class RelativityContext extends MinkContext implements SnippetAcceptingContext
    *
    * @Then /^I see ([a-zA-Z0-9\s,]+) inside of ([a-zA-Z0-9\s,]+)$/
    */
-    public function assertRelativeInside($subject, $others)
+    public function assertInside($subject, $others)
     {
-        return $this->relativeDispatcher('inside', $subject, $others);
+        $this->dispatcher('inside', $subject, $others);
     }
 
   /**
@@ -179,9 +190,9 @@ class RelativityContext extends MinkContext implements SnippetAcceptingContext
    *
    * @Then /^I see ([a-zA-Z0-9\s,]+) outside of ([a-zA-Z0-9\s,]+)$/
    */
-    public function assertRelativeOutside($subject, $others)
+    public function assertOutside($subject, $others)
     {
-        return $this->relativeDispatcher('outside', $subject, $others);
+        $this->dispatcher('outside', $subject, $others);
     }
 
   /**
@@ -194,9 +205,9 @@ class RelativityContext extends MinkContext implements SnippetAcceptingContext
    *
    * @Then /^I see ((?:[a-zA-Z0-9\s,\-](?!not))+) over ([a-zA-Z0-9\s,\-]+)$/
    */
-    public function assertRelativeOver($subject, $others)
+    public function assertOver($subject, $others)
     {
-        return $this->relativeDispatcher('over', $others, $subject, false);
+        $this->dispatcher('over', $others, $subject, false);
     }
 
   /**
@@ -209,9 +220,9 @@ class RelativityContext extends MinkContext implements SnippetAcceptingContext
    *
    * @Then /^I see ([a-zA-Z0-9\s,\-]+) not over ([a-zA-Z0-9\s,\-]+)$/
    */
-    public function assertRelativeNotOver($subject, $others)
+    public function assertNotOver($subject, $others)
     {
-        return $this->relativeDispatcher('not over', $others, $subject, false);
+        $this->dispatcher('not over', $others, $subject, false);
     }
 
   /**
@@ -222,12 +233,12 @@ class RelativityContext extends MinkContext implements SnippetAcceptingContext
    *
    * @Then /^I see visible ([a-zA-Z0-9\s\-\,]+)$/
    */
-    public function assertRelativeVisible($subjects)
+    public function assertVisible($subjects)
     {
         $subjects = $this->parseComponents($subjects);
         $errors = [];
         foreach ($subjects as $subject) {
-            $pass = $this->relativeComponentIsVisible($this->components[$subject]);
+            $pass = $this->componentIsVisible($this->components[$subject]);
             if (!$pass) {
                 $errors[] = sprintf("Component '%s' (%s) is not visible", $subject, $this->components[$subject]);
             }
@@ -246,12 +257,12 @@ class RelativityContext extends MinkContext implements SnippetAcceptingContext
    *
    * @Then /^I don't see ([a-zA-Z0-9\s\-\,]+)$/
    */
-    public function assertRelativeHidden($subjects)
+    public function assertHidden($subjects)
     {
         $subjects = $this->parseComponents($subjects);
         $errors = [];
         foreach ($subjects as $subject) {
-            $pass = !$this->relativeComponentIsVisible($this->components[$subject]);
+            $pass = !$this->componentIsVisible($this->components[$subject]);
             if (!$pass) {
                 $errors[] = sprintf("Component '%s' (%s) is not invisible", $subject, $this->components[$subject]);
             }
@@ -264,6 +275,9 @@ class RelativityContext extends MinkContext implements SnippetAcceptingContext
 
   /**
    * Step to define componenets as background.
+   *
+   * @param TableNode $table
+   *    Gherkin Table argument.
    *
    * @Given I define components:
    */
@@ -285,12 +299,12 @@ class RelativityContext extends MinkContext implements SnippetAcceptingContext
    *
    * @Then /^([a-zA-Z0-9\s,]+) has focus$/
    */
-    public function assertRelativeFocused($subject)
+    public function assertFocused($subject)
     {
         $subject = $this->parseComponents($subject);
         $errors = [];
         if (count($subject) === 1) {
-            $pass = $this->relativeComponentIsFocused($this->components[$subject[0]]);
+            $pass = $this->componentIsFocused($this->components[$subject[0]]);
             if (!$pass) {
                 $errors[] = sprintf("Component '%s' (%s) is not focused", $subject, $this->components[$subject]);
             }
@@ -306,11 +320,14 @@ class RelativityContext extends MinkContext implements SnippetAcceptingContext
   /**
    * Click on one or multiple elements.
    *
+   * @param string $subjects
+   *   Subjects as a string.
+   *
    * @When /^(?:|I )click (?:a?|on) ([a-zA-Z0-9\s,\-]+)$/
    *
    * @javascript
    */
-    public function assertRelativeClick($subjects)
+    public function assertClick($subjects)
     {
         $subjects = $this->parseComponents($subjects);
 
@@ -320,7 +337,7 @@ class RelativityContext extends MinkContext implements SnippetAcceptingContext
 
         $errors = [];
         foreach ($subjects as $subject) {
-            if (!$this->relativeComponentIsVisible($this->components[$subject])) {
+            if (!$this->componentIsVisible($this->components[$subject])) {
                 $errors[] = sprintf("Unable to click on invisible component '%s' (%s)", $subject, $this->components[$subject]);
                 continue;
             }
@@ -358,8 +375,9 @@ class RelativityContext extends MinkContext implements SnippetAcceptingContext
    * @throws Exception
    *   If at least one assertion fails.
    */
-    protected function relativeDispatcher($position, $subject, $others, $scrollToOthers = true)
+    protected function dispatcher($position, $subject, $others, $scrollToOthers = true)
     {
+        $errors = [];
         $subject = $this->parseComponents($subject);
         $others = $this->parseComponents($others);
         foreach ($subject as $subjectItem) {
@@ -376,7 +394,7 @@ class RelativityContext extends MinkContext implements SnippetAcceptingContext
                         $positive = false;
                     }
 
-                    $pass = $this->assertRelativePosition($positionType, $subjectItem, $otherItem, $scrollToOthers);
+                    $pass = $this->assertPosition($positionType, $subjectItem, $otherItem, $scrollToOthers);
                     // Assertion did not pass when expected positive result, but got
                     // fail.
                     if (!$pass && $positive) {
@@ -443,19 +461,19 @@ class RelativityContext extends MinkContext implements SnippetAcceptingContext
    * @throws Exception
    *   If incorrect position is provided.
    */
-    protected function assertRelativePosition($position, $component1, $component2, $scrollToComponent2 = true)
+    protected function assertPosition($position, $component1, $component2, $scrollToComponent2 = true)
     {
         $allowed = ['left', 'right', 'above', 'below', 'inside', 'outside', 'over'];
         if (!in_array($position, $allowed)) {
             throw new \Exception(sprintf("Invalid position %s specified", $position));
         }
 
-        $c1Geometry = $this->getRelativeComponentGeometry($this->components[$component1]);
+        $c1Geometry = $this->getComponentGeometry($this->components[$component1]);
         if (!$c1Geometry) {
             throw new \Exception(sprintf("Unable to retrieve geometry for component '%s' (%s)", $component1, $this->components[$component1]));
         }
 
-        $c2Geometry = $this->getRelativeComponentGeometry($this->components[$component2], $scrollToComponent2);
+        $c2Geometry = $this->getComponentGeometry($this->components[$component2], $scrollToComponent2);
         if (!$c2Geometry) {
             throw new \Exception(sprintf("Unable to retrieve geometry for component '%s' (%s)", $component2, $this->components[$component2]));
         }
@@ -529,9 +547,9 @@ class RelativityContext extends MinkContext implements SnippetAcceptingContext
    *   Array of component geometry: width, height, top, left or
    *   FALSE if component is not visible.
    */
-    protected function getRelativeComponentGeometry($selector, $doScroll = true)
+    protected function getComponentGeometry($selector, $doScroll = true)
     {
-        return $this->executeRelativeJsOnCss($selector, "return (function(el) { 
+        return $this->executeJsOnCss($selector, "return (function(el) { 
         if (el.length) {".($doScroll ? "jQuery(window).scrollTop(el.offset().top);" : "")."
           function zIndex(el) { var z = 0; el.add(el.parents()).each(function () { if ((jQuery(this).css('position') == 'absolute') && jQuery(this).css('z-index') != 'auto') { z = parseInt(jQuery(this).css('z-index'), 10); } }); return z; }                    
           if (el.is(':visible') && el.height() > 1 && !(el.css('clip') == 'rect(0px 0px 0px 0px)' && el.css('position') == 'absolute')){       
@@ -560,9 +578,9 @@ class RelativityContext extends MinkContext implements SnippetAcceptingContext
    *   TRUE if element is focused, FALSE if not focused or element is not
    *   present on the page.
    */
-    protected function relativeComponentIsFocused($selector)
+    protected function componentIsFocused($selector)
     {
-        return $this->executeRelativeJsOnCss($selector, "return (function(el) {
+        return $this->executeJsOnCss($selector, "return (function(el) {
         if (el.length) {
           return el.is(':focus');
         }       
@@ -581,9 +599,9 @@ class RelativityContext extends MinkContext implements SnippetAcceptingContext
    *   TRUE if element is visible, FALSE if not visible or element is not
    *   present on the page.
    */
-    protected function relativeComponentIsVisible($selector)
+    protected function componentIsVisible($selector)
     {
-        return $this->executeRelativeJsOnCss($selector, "return (function(el) {
+        return $this->executeJsOnCss($selector, "return (function(el) {
         if (el.length) {
           jQuery(window).scrollTop(el.offset().top - {{OFFSET}});
           var rect = el.get(0).getBoundingClientRect();
@@ -602,7 +620,7 @@ class RelativityContext extends MinkContext implements SnippetAcceptingContext
   /**
    * Executes JS on an element provided by CSS.
    */
-    protected function executeRelativeJsOnCss($selector, $script)
+    protected function executeJsOnCss($selector, $script)
     {
         // Inject style to disable browser scrollbars.
         $scriptWrapper = "return (function() {

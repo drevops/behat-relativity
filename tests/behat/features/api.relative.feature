@@ -97,7 +97,7 @@ Feature: Behat relative assertions work
     Given I am on the test page
     And I don't see overlay
     When I click on overlay trigger
-    Then I see visible  overlay
+    Then I see visible overlay
     And I save screenshot
 
   @javascript @phpserver
