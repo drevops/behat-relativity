@@ -7,9 +7,9 @@
 
 namespace IntegratedExperts\BehatRelativity;
 
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\RawMinkContext;
-use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 
 /**
  * Class RelativeTrait.
@@ -17,76 +17,71 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 class RelativityContext extends RawMinkContext
 {
 
-  /**
-   * Array of relative components.
-   *
-   * Array keys are component names and values are CSS selectors.
-   * This values must be passed via constructor from the calling class.
-   *
-   * @var array
-   */
+    /**
+     * Array of relative components.
+     *
+     * Array keys are component names and values are CSS selectors.
+     * This values must be passed via constructor from the calling class.
+     *
+     * @var array
+     */
     protected $components;
 
-  /**
-   * Vertical offset.
-   *
-   * @var int
-   */
+    /**
+     * Vertical offset.
+     *
+     * Used to offset vertical position when retrieving component dimensions.
+     *
+     * @var int
+     */
     protected $offset;
 
-  /**
-   * Array of screen size.
-   *
-   * @var array
-   */
+    /**
+     * Array of screen sizes.
+     *
+     * @var array
+     */
     protected $breakpoints;
 
-  /**
-   * Constructor.
-   *
-   * @param array $parameters Settings for constructor.
-   */
+    /**
+     * Constructor.
+     *
+     * @param array $parameters Settings for constructor.
+     */
     public function __construct($parameters = [])
     {
+        // @todo: Add validation to make sure that only correctly formatted component values are provided.
         $this->components = isset($parameters['components']) ? $parameters['components'] : ['page' => "#page"];
+        // @todo: Add validation to make sure that only correctly formatted offset value is provided.
         $this->offset = isset($parameters['offset']) ? $parameters['offset'] : 0;
-        $this->breakpoints = isset($parameters['breakpoints']) ? $parameters['breakpoints'] : ['desktop' => ['width' => 992, 'height' => 1024, 'default' => true]];
+        // @todo: Add validation to make sure that only correctly formatted breakpoint values are provided.
+        $this->breakpoints = isset($parameters['breakpoints']) ? $parameters['breakpoints'] : [
+            'desktop' => [
+                'width' => 992,
+                'height' => 1024,
+                'default' => true,
+            ],
+        ];
     }
 
-  /**
-   * Init values required for relativity context.
-   *
-   * @param BeforeScenarioScope $scope Scenario scope.
-   *
-   * @BeforeScenario
-   */
-    public function beforeScenarioRelativityInit(BeforeScenarioScope $scope)
-    {
-        $defaultScreenSize = [];
-        foreach ($this->breakpoints as $breakpoint) {
-            if (isset($breakpoint['default']) && $breakpoint['default'] === true) {
-                $defaultScreenSize = $breakpoint;
-            }
-        }
-
-        if (count($defaultScreenSize) > 0) {
-            $this->getSession()->resizeWindow($defaultScreenSize['width'], $defaultScreenSize['height'], 'current');
-        }
-    }
-
-  /**
-   * Change screen size.
-   *
-   * @param string $screen name of screen size.
-   *
-   * @Given /^I am viewing the site on a ([a-zA-Z0-9\s,]+) device$/
-   */
-    public function iAmViewingTheSiteOnDevice($screen)
+    /**
+     * Step definition to change screen size.
+     *
+     * @param string $screen Name of the screen size.
+     *
+     * @Given /^I am viewing the site on a ([a-zA-Z0-9\s,]+) screen$/
+     * @Given /^I am viewing the site on a ([a-zA-Z0-9\s,]+) device$/
+     */
+    public function iAmViewingTheSiteOnScreen($screen)
     {
         $errors = [];
 
         try {
-            $this->getSession()->resizeWindow($this->breakpoints[$screen]['width'], $this->breakpoints[$screen]['height'], 'current');
+            $this->getSession()->resizeWindow(
+                $this->breakpoints[$screen]['width'],
+                $this->breakpoints[$screen]['height'],
+                'current'
+            );
         } catch (\Exception $e) {
             if (!isset($this->breakpoints[$screen])) {
                 $errors[] = sprintf("Screen size '%s' is not defined in behat.yml", $screen);
@@ -105,200 +100,13 @@ class RelativityContext extends RawMinkContext
         }
     }
 
-  /**
-   * Assert that a subject is above others.
-   *
-   * @param string $subject
-   *   Subject as a string.
-   * @param string $others
-   *   Others as a string.
-   *
-   * @Then /^I see ([a-zA-Z0-9\s,]+) above ([a-zA-Z0-9\s,\-]+)$/
-   */
-    public function assertAbove($subject, $others)
-    {
-        $this->dispatcher('above', $subject, $others);
-    }
-
-  /**
-   * Assert that a subject is below others.
-   *
-   * @param string $subject
-   *   Subject as a string.
-   * @param string $others
-   *   Others as a string.
-   *
-   * @Then /^I see ([a-zA-Z0-9\s,]+) below ([a-zA-Z0-9\s,\-]+)$/
-   */
-    public function assertBelow($subject, $others)
-    {
-        $this->dispatcher('below', $subject, $others);
-    }
-
-  /**
-   * Assert that a subject is on the left of the others.
-   *
-   * @param string $subject
-   *   Subject as a string.
-   * @param string $others
-   *   Others as a string.
-   *
-   * @Then /^I see ([a-zA-Z0-9\s,]+) to (?:|the\s)left of ([a-zA-Z0-9\s,]+)$/
-   */
-    public function assertLeft($subject, $others)
-    {
-        $this->dispatcher('left', $subject, $others);
-    }
-
-  /**
-   * Assert that a subject is on the right of the others.
-   *
-   * @param string $subject
-   *   Subject as a string.
-   * @param string $others
-   *   Others as a string.
-   *
-   * @Then /^I see ([a-zA-Z0-9\s,]+) to (?:|the\s)right of ([a-zA-Z0-9\s,]+)$/
-   */
-    public function assertRight($subject, $others)
-    {
-        $this->dispatcher('right', $subject, $others);
-    }
-
-  /**
-   * Assert that a subject is inside of the others.
-   *
-   * @param string $subject
-   *   Subject as a string.
-   * @param string $others
-   *   Others as a string.
-   *
-   * @Then /^I see ([a-zA-Z0-9\s,]+) inside of ([a-zA-Z0-9\s,]+)$/
-   */
-    public function assertInside($subject, $others)
-    {
-        $this->dispatcher('inside', $subject, $others);
-    }
-
-  /**
-   * Assert that a subject is outside of the others.
-   *
-   * @param string $subject
-   *   Subject as a string.
-   * @param string $others
-   *   Others as a string.
-   *
-   * @Then /^I see ([a-zA-Z0-9\s,]+) outside of ([a-zA-Z0-9\s,]+)$/
-   */
-    public function assertOutside($subject, $others)
-    {
-        $this->dispatcher('outside', $subject, $others);
-    }
-
-  /**
-   * Assert that a subject is over the others.
-   *
-   * @param string $subject
-   *   Subject as a string.
-   * @param string $others
-   *   Others as a string.
-   *
-   * @Then /^I see ((?:[a-zA-Z0-9\s,\-](?!not))+) over ([a-zA-Z0-9\s,\-]+)$/
-   */
-    public function assertOver($subject, $others)
-    {
-        $this->dispatcher('over', $others, $subject, false);
-    }
-
-  /**
-   * Assert that a subject is not over the others.
-   *
-   * @param string $subject
-   *   Subject as a string.
-   * @param string $others
-   *   Others as a string.
-   *
-   * @Then /^I see ([a-zA-Z0-9\s,\-]+) not over ([a-zA-Z0-9\s,\-]+)$/
-   */
-    public function assertNotOver($subject, $others)
-    {
-        $this->dispatcher('not over', $others, $subject, false);
-    }
-
-  /**
-   * Assert that subject(s) is/are visible.
-   *
-   * @param string $subjects
-   *   Subjects as a string.
-   *
-   * @Then /^I see visible ([a-zA-Z0-9\s\-\,]+)$/
-   */
-    public function assertVisible($subjects)
-    {
-        $subjects = $this->parseComponents($subjects);
-        $errors = [];
-        foreach ($subjects as $subject) {
-            $pass = $this->componentIsVisible($this->components[$subject]);
-            if (!$pass) {
-                $errors[] = sprintf("Component '%s' (%s) is not visible", $subject, $this->components[$subject]);
-            }
-        }
-
-        if (count($errors) > 0) {
-            throw new \Exception(implode("\n", $errors));
-        }
-    }
-
-  /**
-   * Assert that subject(s) is/are invisible.
-   *
-   * @param string $subjects
-   *   Subjects as a string.
-   *
-   * @Then /^I don't see ([a-zA-Z0-9\s\-\,]+)$/
-   */
-    public function assertHidden($subjects)
-    {
-        $subjects = $this->parseComponents($subjects);
-        $errors = [];
-        foreach ($subjects as $subject) {
-            $pass = !$this->componentIsVisible($this->components[$subject]);
-            if (!$pass) {
-                $errors[] = sprintf("Component '%s' (%s) is not invisible", $subject, $this->components[$subject]);
-            }
-        }
-
-        if (count($errors) > 0) {
-            throw new \Exception(implode("\n", $errors));
-        }
-    }
-
-  /**
-   * Step to define componenets as background.
-   *
-   * @param TableNode $table
-   *    Gherkin Table argument.
-   *
-   * @Given I define components:
-   */
-    public function iDefineComponents(TableNode $table)
-    {
-        foreach ($table->getRows() as $item) {
-            list($name, $id) = $item;
-            if ($name && $id) {
-                $this->components[$name] = $id;
-            }
-        }
-    }
-
-  /**
-   * Assert that subject is focused.
-   *
-   * @param string $subject
-   *   Subject as a string.
-   *
-   * @Then /^([a-zA-Z0-9\s,]+) has focus$/
-   */
+    /**
+     * Assert that subject is focused.
+     *
+     * @param string $subject Subject as a string.
+     *
+     * @Then /^([a-zA-Z0-9\s,]+) has focus$/
+     */
     public function assertFocused($subject)
     {
         $subject = $this->parseComponents($subject);
@@ -317,16 +125,15 @@ class RelativityContext extends RawMinkContext
         }
     }
 
-  /**
-   * Click on one or multiple elements.
-   *
-   * @param string $subjects
-   *   Subjects as a string.
-   *
-   * @When /^(?:|I )click (?:a?|on) ([a-zA-Z0-9\s,\-]+)$/
-   *
-   * @javascript
-   */
+    /**
+     * Click on one or multiple elements.
+     *
+     * @param string $subjects Subjects as a string.
+     *
+     * @When /^(?:|I )click (?:a?|on) ([a-zA-Z0-9\s,\-]+)$/
+     *
+     * @javascript
+     */
     public function assertClick($subjects)
     {
         $subjects = $this->parseComponents($subjects);
@@ -338,7 +145,11 @@ class RelativityContext extends RawMinkContext
         $errors = [];
         foreach ($subjects as $subject) {
             if (!$this->componentIsVisible($this->components[$subject])) {
-                $errors[] = sprintf("Unable to click on invisible component '%s' (%s)", $subject, $this->components[$subject]);
+                $errors[] = sprintf(
+                    "Unable to click on invisible component '%s' (%s)",
+                    $subject,
+                    $this->components[$subject]
+                );
                 continue;
             }
 
@@ -348,7 +159,12 @@ class RelativityContext extends RawMinkContext
             try {
                 $this->getSession()->getDriver()->click($xpath);
             } catch (\Exception $e) {
-                $errors[] = sprintf("Unable to click on component '%s' (%s): %s", $subject, $this->components[$subject], $e->getMessage());
+                $errors[] = sprintf(
+                    "Unable to click on component '%s' (%s): %s",
+                    $subject,
+                    $this->components[$subject],
+                    $e->getMessage()
+                );
             }
         }
 
@@ -357,24 +173,206 @@ class RelativityContext extends RawMinkContext
         }
     }
 
-  /**
-   * Centralised dispatcher for all relative assertions.
-   *
-   * Note that assertions for all elements will be assessed before failing.
-   *
-   * @param string $position
-   *   Position name.
-   * @param string $subject
-   *   Subject name as a string.
-   * @param string $others
-   *   Other names as a string.
-   * @param bool $scrollToOthers
-   *   Optional flag to scroll to other components when performing geometry
-   *   retrieval.
-   *
-   * @throws Exception
-   *   If at least one assertion fails.
-   */
+    /**
+     * Init values required for relativity context.
+     *
+     * @param \Behat\Behat\Hook\Scope\BeforeScenarioScope $scope Scenario scope.
+     *
+     * @BeforeScenario
+     */
+    public function init(BeforeScenarioScope $scope)
+    {
+        $defaultScreenSize = [];
+        foreach ($this->breakpoints as $breakpoint) {
+            if (isset($breakpoint['default']) && $breakpoint['default'] === true) {
+                $defaultScreenSize = $breakpoint;
+            }
+        }
+
+        if (count($defaultScreenSize) > 0) {
+            $this->getSession()->resizeWindow($defaultScreenSize['width'], $defaultScreenSize['height'], 'current');
+        }
+    }
+
+    /**
+     * Assert that a subject is above others.
+     *
+     * @param string $subject Subject as a string.
+     * @param string $others  Others as a string.
+     *
+     * @Then /^I see ([a-zA-Z0-9\s,]+) above ([a-zA-Z0-9\s,\-]+)$/
+     */
+    public function assertAbove($subject, $others)
+    {
+        $this->dispatcher('above', $subject, $others);
+    }
+
+    /**
+     * Assert that a subject is below others.
+     *
+     * @param string $subject Subject as a string.
+     * @param string $others  Others as a string.
+     *
+     * @Then /^I see ([a-zA-Z0-9\s,]+) below ([a-zA-Z0-9\s,\-]+)$/
+     */
+    public function assertBelow($subject, $others)
+    {
+        $this->dispatcher('below', $subject, $others);
+    }
+
+    /**
+     * Assert that a subject is on the left of the others.
+     *
+     * @param string $subject Subject as a string.
+     * @param string $others  Others as a string.
+     *
+     * @Then /^I see ([a-zA-Z0-9\s,]+) to (?:|the\s)left of ([a-zA-Z0-9\s,]+)$/
+     */
+    public function assertLeft($subject, $others)
+    {
+        $this->dispatcher('left', $subject, $others);
+    }
+
+    /**
+     * Assert that a subject is on the right of the others.
+     *
+     * @param string $subject Subject as a string.
+     * @param string $others  Others as a string.
+     *
+     * @Then /^I see ([a-zA-Z0-9\s,]+) to (?:|the\s)right of ([a-zA-Z0-9\s,]+)$/
+     */
+    public function assertRight($subject, $others)
+    {
+        $this->dispatcher('right', $subject, $others);
+    }
+
+    /**
+     * Assert that a subject is inside of the others.
+     *
+     * @param string $subject Subject as a string.
+     * @param string $others  Others as a string.
+     *
+     * @Then /^I see ([a-zA-Z0-9\s,]+) inside of ([a-zA-Z0-9\s,]+)$/
+     */
+    public function assertInside($subject, $others)
+    {
+        $this->dispatcher('inside', $subject, $others);
+    }
+
+    /**
+     * Assert that a subject is outside of the others.
+     *
+     * @param string $subject Subject as a string.
+     * @param string $others  Others as a string.
+     *
+     * @Then /^I see ([a-zA-Z0-9\s,]+) outside of ([a-zA-Z0-9\s,]+)$/
+     */
+    public function assertOutside($subject, $others)
+    {
+        $this->dispatcher('outside', $subject, $others);
+    }
+
+    /**
+     * Assert that a subject is over the others.
+     *
+     * @param string $subject Subject as a string.
+     * @param string $others  Others as a string.
+     *
+     * @Then /^I see ((?:[a-zA-Z0-9\s,\-](?!not))+) over ([a-zA-Z0-9\s,\-]+)$/
+     */
+    public function assertOver($subject, $others)
+    {
+        $this->dispatcher('over', $others, $subject, false);
+    }
+
+    /**
+     * Assert that a subject is not over the others.
+     *
+     * @param string $subject Subject as a string.
+     * @param string $others  Others as a string.
+     *
+     * @Then /^I see ([a-zA-Z0-9\s,\-]+) not over ([a-zA-Z0-9\s,\-]+)$/
+     */
+    public function assertNotOver($subject, $others)
+    {
+        $this->dispatcher('not over', $others, $subject, false);
+    }
+
+    /**
+     * Assert that subject(s) is/are visible.
+     *
+     * @param string $subjects Subjects as a string.
+     *
+     * @Then /^I see visible ([a-zA-Z0-9\s\-\,]+)$/
+     */
+    public function assertVisible($subjects)
+    {
+        $subjects = $this->parseComponents($subjects);
+        $errors = [];
+        foreach ($subjects as $subject) {
+            $pass = $this->componentIsVisible($this->components[$subject]);
+            if (!$pass) {
+                $errors[] = sprintf("Component '%s' (%s) is not visible", $subject, $this->components[$subject]);
+            }
+        }
+
+        if (count($errors) > 0) {
+            throw new \Exception(implode("\n", $errors));
+        }
+    }
+
+    /**
+     * Assert that subject(s) is/are invisible.
+     *
+     * @param string $subjects Subjects as a string.
+     *
+     * @Then /^I don't see ([a-zA-Z0-9\s\-\,]+)$/
+     */
+    public function assertHidden($subjects)
+    {
+        $subjects = $this->parseComponents($subjects);
+        $errors = [];
+        foreach ($subjects as $subject) {
+            $pass = !$this->componentIsVisible($this->components[$subject]);
+            if (!$pass) {
+                $errors[] = sprintf("Component '%s' (%s) is not invisible", $subject, $this->components[$subject]);
+            }
+        }
+
+        if (count($errors) > 0) {
+            throw new \Exception(implode("\n", $errors));
+        }
+    }
+
+    /**
+     * Step to define componenets as background.
+     *
+     * @param \Behat\Gherkin\Node\TableNode $table Gherkin Table argument.
+     *
+     * @Given I define components:
+     */
+    public function iDefineComponents(TableNode $table)
+    {
+        foreach ($table->getRows() as $item) {
+            list($name, $id) = $item;
+            if ($name && $id) {
+                $this->components[$name] = $id;
+            }
+        }
+    }
+
+    /**
+     * Centralised dispatcher for all relative assertions.
+     *
+     * Note that assertions for all elements will be assessed before failing.
+     *
+     * @param string $position     Position name.
+     * @param string $subject      Subject name as a string.
+     * @param string $others       Other names as a string.
+     * @param bool $scrollToOthers Optional flag to scroll to other components when performing geometry retrieval.
+     *
+     * @throws \Exception If at least one assertion fails.
+     */
     protected function dispatcher($position, $subject, $others, $scrollToOthers = true)
     {
         $errors = [];
@@ -398,11 +396,21 @@ class RelativityContext extends RawMinkContext
                     // Assertion did not pass when expected positive result, but got
                     // fail.
                     if (!$pass && $positive) {
-                        $errors[] = sprintf("Component '%s' is not in '%s' relative position to component '%s'", $subjectItem, $positionType, $otherItem);
+                        $errors[] = sprintf(
+                            "Component '%s' is not in '%s' relative position to component '%s'",
+                            $subjectItem,
+                            $positionType,
+                            $otherItem
+                        );
                     }
                     // Assertion passed when expected negative result, but got pass.
                     if ($pass && !$positive) {
-                        $errors[] = sprintf("Component '%s' is not in 'not %s' relative position to component '%s'", $subjectItem, $positionType, $otherItem);
+                        $errors[] = sprintf(
+                            "Component '%s' is not in 'not %s' relative position to component '%s'",
+                            $subjectItem,
+                            $positionType,
+                            $otherItem
+                        );
                     }
                 } catch (\Exception $e) {
                     $errors[] = $e->getMessage();
@@ -415,19 +423,15 @@ class RelativityContext extends RawMinkContext
         }
     }
 
-  /**
-   * Parse component names.
-   *
-   * @param string $text
-   *   Component name as a string usually taken from the test step definition.
-   *
-   * @return array
-   *   Array of parsed components.
-   *
-   * @throws Exception
-   *   If provided components are not a part of the set of pre-configured
-   *   components.
-   */
+    /**
+     * Parse component names.
+     *
+     * @param string $text Component name as a string usually taken from the test step definition.
+     *
+     * @return array Array of parsed components.
+     *
+     * @throws \Exception If provided components are not a part of the set of pre-configured components.
+     */
     protected function parseComponents($text)
     {
         $components = preg_split("/\s*(,|and)\s*/", $text);
@@ -440,42 +444,49 @@ class RelativityContext extends RawMinkContext
         return $components;
     }
 
-  /**
-   * Assert relative position of 2 components.
-   *
-   * @todo Extend this to handle 'over' and 'under' absolutely positioned
-   * elements.
-   *
-   * @param string $position
-   *   Position identifier. One of: left, right, above, below, inside, outside.
-   * @param string $component1
-   *   Name of the first component.
-   * @param string $component2
-   *   Name of the second component.
-   * @param bool $scrollToComponent2
-   *   Optional flag to scroll to component2 when performing geometry retrieval.
-   *
-   * @return bool
-   *   TRUE if components are positioned relatively correct, FALSE otherwise.
-   *
-   * @throws Exception
-   *   If incorrect position is provided.
-   */
+    /**
+     * Assert relative position of 2 components.
+     *
+     * @todo Extend this to handle 'over' and 'under' absolutely positioned
+     * elements.
+     *
+     * @param string $position         Position identifier. One of: left, right, above, below, inside, outside.
+     * @param string $component1       Name of the first component.
+     * @param string $component2       Name of the second component.
+     * @param bool $scrollToComponent2 Optional flag to scroll to component2 when performing geometry retrieval.
+     *
+     * @return bool True if components are positioned relatively correct, false otherwise.
+     *
+     * @throws \RuntimeException If incorrect position is provided.
+     * @throws \Exception If unable to retrieve component dimensions.
+     */
     protected function assertPosition($position, $component1, $component2, $scrollToComponent2 = true)
     {
         $allowed = ['left', 'right', 'above', 'below', 'inside', 'outside', 'over'];
         if (!in_array($position, $allowed)) {
-            throw new \Exception(sprintf("Invalid position %s specified", $position));
+            throw new \RuntimeException(sprintf("Invalid position %s specified", $position));
         }
 
         $c1Geometry = $this->getComponentGeometry($this->components[$component1]);
         if (!$c1Geometry) {
-            throw new \Exception(sprintf("Unable to retrieve geometry for component '%s' (%s)", $component1, $this->components[$component1]));
+            throw new \Exception(
+                sprintf(
+                    "Unable to retrieve geometry for component '%s' (%s)",
+                    $component1,
+                    $this->components[$component1]
+                )
+            );
         }
 
         $c2Geometry = $this->getComponentGeometry($this->components[$component2], $scrollToComponent2);
         if (!$c2Geometry) {
-            throw new \Exception(sprintf("Unable to retrieve geometry for component '%s' (%s)", $component2, $this->components[$component2]));
+            throw new \Exception(
+                sprintf(
+                    "Unable to retrieve geometry for component '%s' (%s)",
+                    $component2,
+                    $this->components[$component2]
+                )
+            );
         }
 
         $result = false;
@@ -514,7 +525,16 @@ class RelativityContext extends RawMinkContext
 
             case 'over':
                 $result = true;
-                $result &= $this->rectanglesIntersect($c1Geometry['left'], $c1Geometry['top'], $c1Geometry['width'], $c1Geometry['height'], $c2Geometry['left'], $c2Geometry['top'], $c2Geometry['width'], $c2Geometry['height']);
+                $result &= $this->rectanglesIntersect(
+                    $c1Geometry['left'],
+                    $c1Geometry['top'],
+                    $c1Geometry['width'],
+                    $c1Geometry['height'],
+                    $c2Geometry['left'],
+                    $c2Geometry['top'],
+                    $c2Geometry['width'],
+                    $c2Geometry['height']
+                );
                 $result &= $c1Geometry['zIndex'] <= $c2Geometry['zIndex'];
                 break;
         }
@@ -522,34 +542,30 @@ class RelativityContext extends RawMinkContext
         return $result;
     }
 
-  /**
-   * Check if two rectangles intersect.
-   */
+    /**
+     * Check if two rectangles intersect.
+     */
     protected function rectanglesIntersect($x1, $y1, $width1, $height1, $x2, $y2, $width2, $height2)
     {
         return !($x1 >= $x2 + $width2 || $x1 + $width1 <= $x2 || $y1 >= $y2 + $height2 || $y1 + $height1 <= $y2);
     }
 
-  /**
-   * Get relative component geometry data.
-   *
-   * Note that we are using oversimplified way to determine z-index of the
-   * element without using Stacking Contexts, but this should cover majority of
-   * cases.
-   *
-   * @param string $selector
-   *   CSS selector.
-   *
-   * @param bool $doScroll
-   *   Scrollable or not.
-   *
-   * @return array|bool
-   *   Array of component geometry: width, height, top, left or
-   *   FALSE if component is not visible.
-   */
+    /**
+     * Get relative component geometry data.
+     *
+     * Note that we are using oversimplified way to determine z-index of the
+     * element without using Stacking Contexts, but this should cover majority of
+     * cases.
+     *
+     * @param string $selector CSS selector.
+     * @param bool $doScroll   Whether to scroll to component.
+     *
+     * @return array|bool Array of component geometry: width, height, top, left or false if component is not visible.
+     */
     protected function getComponentGeometry($selector, $doScroll = true)
     {
-        return $this->executeJsOnCss($selector, "return (function(el) { 
+        $script = <<<SCRIPT
+return (function(el) { 
         if (el.length) {".($doScroll ? "jQuery(window).scrollTop(el.offset().top);" : "")."
           function zIndex(el) { var z = 0; el.add(el.parents()).each(function () { if ((jQuery(this).css('position') == 'absolute') && jQuery(this).css('z-index') != 'auto') { z = parseInt(jQuery(this).css('z-index'), 10); } }); return z; }                    
           if (el.is(':visible') && el.height() > 1 && !(el.css('clip') == 'rect(0px 0px 0px 0px)' && el.css('position') == 'absolute')){       
@@ -565,43 +581,43 @@ class RelativityContext extends RawMinkContext
         }  
         return false;
       })({{ELEMENT}});
-    ");
+SCRIPT;
+
+        return $this->executeJsOnCss($selector, $script);
     }
 
-  /**
-   * Check whether component is focused.
-   *
-   * @param string $selector
-   *   CSS selector.
-   *
-   * @return bool
-   *   TRUE if element is focused, FALSE if not focused or element is not
-   *   present on the page.
-   */
+    /**
+     * Check whether component is focused.
+     *
+     * @param string $selector CSS selector.
+     *
+     * @return bool True if element is focused, false if not focused or element is not present on the page.
+     */
     protected function componentIsFocused($selector)
     {
-        return $this->executeJsOnCss($selector, "return (function(el) {
+        $script = <<<SCRIPT
+return (function(el) {
         if (el.length) {
           return el.is(':focus');
         }       
         return false; 
       })({{ELEMENT}});
-    ");
+SCRIPT;
+
+        return $this->executeJsOnCss($selector, $script);
     }
 
-  /**
-   * Check whether component is visible on the page.
-   *
-   * @param string $selector
-   *   CSS selector.
-   *
-   * @return bool
-   *   TRUE if element is visible, FALSE if not visible or element is not
-   *   present on the page.
-   */
+    /**
+     * Check whether component is visible on the page.
+     *
+     * @param string $selector CSS selector.
+     *
+     * @return bool True if element is visible, false if not visible or element is not present on the page.
+     */
     protected function componentIsVisible($selector)
     {
-        return $this->executeJsOnCss($selector, "return (function(el) {
+        $script = <<<SCRIPT
+return (function(el) {
         if (el.length) {
           jQuery(window).scrollTop(el.offset().top - {{OFFSET}});
           var rect = el.get(0).getBoundingClientRect();
@@ -614,12 +630,14 @@ class RelativityContext extends RawMinkContext
         }       
         return false; 
       })({{ELEMENT}});
-    ");
+SCRIPT;
+
+        return $this->executeJsOnCss($selector, $script);
     }
 
-  /**
-   * Executes JS on an element provided by CSS.
-   */
+    /**
+     * Executes JS on an element provided by CSS.
+     */
     protected function executeJsOnCss($selector, $script)
     {
         // Inject style to disable browser scrollbars.
