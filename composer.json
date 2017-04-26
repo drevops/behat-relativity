@@ -36,6 +36,18 @@
   "scripts": {
     "cs": "./vendor/bin/phpcs --runtime-set installed_paths $(pwd)/vendor/escapestudios/symfony2-coding-standard --colors -s -p",
     "cbf": "./vendor/bin/phpcbf --runtime-set installed_paths $(pwd)/vendor/escapestudios/symfony2-coding-standard --colors",
-    "test": "cd ./tests/behat/ && ../../vendor/bin/behat --colors"
+    "test": "cd ./tests/behat/ && ../../vendor/bin/behat --colors",
+    "cleanup": "vagrant -f destroy &>/dev/null || $(which true); rm -Rf $(pwd)/.vagrant; rm -Rf $(pwd)/.beetbox; rm -Rf $(pwd)/Vagrantfile; rm -Rf $(pwd)/vendor;"
+  },
+  "extra": {
+    "beetbox": {
+      "beet_domain": "behat-relativity.local",
+      "beet_root": "{{ beet_base }}",
+      "php_version": "5.6",
+      "vagrant_memory": "2048",
+      "php_memory_limit": "512M",
+      "installed_extras_phantomjs": true,
+      "phantomjs_webdriver": true
+    }
   }
 }
