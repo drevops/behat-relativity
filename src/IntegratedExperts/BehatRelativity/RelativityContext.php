@@ -564,24 +564,22 @@ class RelativityContext extends RawMinkContext
      */
     protected function getComponentGeometry($selector, $doScroll = true)
     {
-        $script = <<<SCRIPT
-return (function(el) { 
-        if (el.length) {".($doScroll ? "jQuery(window).scrollTop(el.offset().top);" : "")."
-          function zIndex(el) { var z = 0; el.add(el.parents()).each(function () { if ((jQuery(this).css('position') == 'absolute') && jQuery(this).css('z-index') != 'auto') { z = parseInt(jQuery(this).css('z-index'), 10); } }); return z; }                    
-          if (el.is(':visible') && el.height() > 1 && !(el.css('clip') == 'rect(0px 0px 0px 0px)' && el.css('position') == 'absolute')){       
-            return {
-              width: el.outerWidth(),
-              height: el.outerHeight(),
-              top: Math.ceil(el.offset().top),  
-              left: Math.ceil(el.offset().left),
-              zIndex: zIndex(el),
-              position: el.css('position')
-            };
-          }
-        }  
-        return false;
-      })({{ELEMENT}});
-SCRIPT;
+        $script = "return (function(el) { 
+            if (el.length) {".($doScroll ? "jQuery(window).scrollTop(el.offset().top);" : "")."
+              function zIndex(el) { var z = 0; el.add(el.parents()).each(function () { if ((jQuery(this).css('position') == 'absolute') && jQuery(this).css('z-index') != 'auto') { z = parseInt(jQuery(this).css('z-index'), 10); } }); return z; }                    
+              if (el.is(':visible') && el.height() > 1 && !(el.css('clip') == 'rect(0px 0px 0px 0px)' && el.css('position') == 'absolute')){       
+                return {
+                  width: el.outerWidth(),
+                  height: el.outerHeight(),
+                  top: Math.ceil(el.offset().top),  
+                  left: Math.ceil(el.offset().left),
+                  zIndex: zIndex(el),
+                  position: el.css('position')
+                };
+              }
+            }  
+            return false;
+        })({{ELEMENT}});";
 
         return $this->executeJsOnCss($selector, $script);
     }
@@ -595,14 +593,12 @@ SCRIPT;
      */
     protected function componentIsFocused($selector)
     {
-        $script = <<<SCRIPT
-return (function(el) {
-        if (el.length) {
-          return el.is(':focus');
-        }       
-        return false; 
-      })({{ELEMENT}});
-SCRIPT;
+        $script = "return (function(el) {
+            if (el.length) {
+              return el.is(':focus');
+            }       
+            return false; 
+        })({{ELEMENT}});";
 
         return $this->executeJsOnCss($selector, $script);
     }
@@ -616,21 +612,19 @@ SCRIPT;
      */
     protected function componentIsVisible($selector)
     {
-        $script = <<<SCRIPT
-return (function(el) {
-        if (el.length) {
-          jQuery(window).scrollTop(el.offset().top - {{OFFSET}});
-          var rect = el.get(0).getBoundingClientRect();
-          return el.is(':visible') && el.height() > 1 && !(el.css('clip') == 'rect(0px 0px 0px 0px)' && el.css('position') == 'absolute') && !(
-            rect.left + rect.width <= 0  
-            || rect.top + rect.height <= 0
-            || rect.left >= window.innerWidth 
-            || rect.top >= window.innerHeight
-          );
-        }       
-        return false; 
-      })({{ELEMENT}});
-SCRIPT;
+        $script = "return (function(el) {
+            if (el.length) {
+              jQuery(window).scrollTop(el.offset().top - {{OFFSET}});
+              var rect = el.get(0).getBoundingClientRect();
+              return el.is(':visible') && el.height() > 1 && !(el.css('clip') == 'rect(0px 0px 0px 0px)' && el.css('position') == 'absolute') && !(
+                rect.left + rect.width <= 0  
+                || rect.top + rect.height <= 0
+                || rect.left >= window.innerWidth 
+                || rect.top >= window.innerHeight
+              );
+            }       
+            return false; 
+        })({{ELEMENT}});";
 
         return $this->executeJsOnCss($selector, $script);
     }
