@@ -14,6 +14,8 @@ Behat context for relative elements testing
 ### Running tests
 ```bash
 vagrant ssh
+scripts/selenium-install.sh
+scripts/selenium-start.sh
 composer test
 ```
 ### Cleanup an environment
