@@ -6,7 +6,7 @@ Behat context for relative elements testing
 [![Total Downloads](https://poser.pugx.org/integratedexperts/behat-relativity/downloads)](https://packagist.org/packages/integratedexperts/behat-relativity)
 [![License](https://poser.pugx.org/integratedexperts/behat-relativity/license)](https://packagist.org/packages/integratedexperts/behat-relativity)
 
-### Local development
+## Local development
 ### Preparing local environment
 1. Install [Vagrant](https://www.vagrantup.com/downloads.html) and [VirtualBox](https://www.virtualbox.org/wiki/Downloads) and [Composer](https://getcomposer.org/).
 2. Install all dependencies: `composer install`
