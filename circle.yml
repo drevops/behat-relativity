@@ -1,4 +1,6 @@
 machine:
+  timezone:
+    Australia/Sydney
   environment:
     # Build configuration.
     BUILD_DIR: $HOME/$CIRCLE_PROJECT_REPONAME
@@ -11,6 +13,7 @@ dependencies:
   pre:
     - rm /opt/circleci/php/$(phpenv global)/etc/conf.d/xdebug.ini
   override:
+    - echo "date.timezone = Europe/Berlin" >> /opt/circleci/php/$(phpenv global)/etc/php.ini
     - cd $HOME/$CIRCLE_PROJECT_REPONAME && composer install --no-progress --no-interaction
     - scripts/selenium-install.sh
     - 'java -jar /var/tmp/selenium-server-standalone.jar -trustAllSSLCertificates -Dwebdriver.chrome.driver=/var/tmp/chromedriver':
