@@ -1,5 +1,6 @@
 # behat-relativity
 Behat context for relative elements testing
+
 [![CircleCI](https://circleci.com/gh/integratedexperts/behat-relativity.svg?style=shield)](https://circleci.com/gh/integratedexperts/behat-relativity)
 [![Latest Stable Version](https://poser.pugx.org/integratedexperts/behat-relativity/v/stable)](https://packagist.org/packages/integratedexperts/behat-relativity)
 [![Total Downloads](https://poser.pugx.org/integratedexperts/behat-relativity/downloads)](https://packagist.org/packages/integratedexperts/behat-relativity)
