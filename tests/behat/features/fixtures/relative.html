@@ -1,410 +1,412 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title></title>
-  <script src="jquery.min.js"></script>
-  <style>
-    body {
-      position: relative;
-    }
-    
-    #top {
-      clear: both;
-      background: yellow;
-    }
+    <meta charset="UTF-8">
+    <title></title>
 
-    #top-inner {
-      background: orange;
-      margin: 20px;
-    }
+    <style>
+        body {
+            position: relative;
+        }
 
-    #main {
-      background: gray;
-      display: inline-block;
-      width: 50%;
-    }
+        #top {
+            clear: both;
+            background: yellow;
+        }
 
-    #main-inner {
-      background: darkgray;
-      margin: 20px;
-    }
+        #top-inner {
+            background: orange;
+            margin: 20px;
+        }
 
-    #main-inner-custom {
-      background: orange;
-      margin: 20px;
-    }
+        #main {
+            background: gray;
+            display: inline-block;
+            width: 50%;
+        }
 
-    #left {
-      float: left;
-      background: blue;
-      width: 25%;
-    }
+        #main-inner {
+            background: darkgray;
+            margin: 20px;
+        }
 
-    #left-inner {
-      background: darkblue;
-      margin: 20px;
-    }
+        #main-inner-custom {
+            background: orange;
+            margin: 20px;
+        }
 
-    #right {
-      float: right;
-      background: green;
-      width: 25%;
-    }
+        #left {
+            float: left;
+            background: blue;
+            width: 25%;
+        }
 
-    #right-inner {
-      background: darkgreen;
-      margin: 20px;
-    }
+        #left-inner {
+            background: darkblue;
+            margin: 20px;
+        }
 
-    #bottom {
-      clear: both;
-      background: red;
-    }
+        #right {
+            float: right;
+            background: green;
+            width: 25%;
+        }
 
-    #bottom-inner {
-      clear: both;
-      background: darkred;
-      margin: 20px;
-    }
+        #right-inner {
+            background: darkgreen;
+            margin: 20px;
+        }
 
-    #off-canvas-left {
-      position: fixed;
-      width: 200px;
-      height: 100%;
-      left: -200px;
-      top: 0;
-      background: #00a9ec;
-    }
+        #bottom {
+            clear: both;
+            background: red;
+        }
 
-    #off-canvas-right {
-      position: fixed;
-      width: 200px;
-      height: 100%;
-      right: -200px;
-      top: 0;
-      background: #1b405b;
-    }
+        #bottom-inner {
+            clear: both;
+            background: darkred;
+            margin: 20px;
+        }
 
-    #off-canvas-top {
-      position: fixed;
-      width: 100%;
-      height: 200px;
-      left: 0;
-      top: -200px;
-      background: #00a9ec;
-    }
+        #off-canvas-left {
+            position: fixed;
+            width: 200px;
+            height: 100%;
+            left: -200px;
+            top: 0;
+            background: #00a9ec;
+        }
 
-    #off-canvas-bottom {
-      position: fixed;
-      width: 100%;
-      height: 200px;
-      left: 0;
-      bottom: -200px;
-      background: #1b405b;
-    }
+        #off-canvas-right {
+            position: fixed;
+            width: 200px;
+            height: 100%;
+            right: -200px;
+            top: 0;
+            background: #1b405b;
+        }
 
-    #top-inner,
-    #bottom-inner,
-    #left-inner,
-    #right-inner,
-    #main-inner,
-    #main-inner-custom {
-      padding: 20px 100px;
-      color: white;
-      overflow: hidden;
-    }
+        #off-canvas-top {
+            position: fixed;
+            width: 100%;
+            height: 200px;
+            left: 0;
+            top: -200px;
+            background: #00a9ec;
+        }
 
-    @media (max-width: 600px) {
-      #main,
-      #top,
-      #bottom,
-      #left,
-      #right {
-        float: none;
-        width: 100%;
-      }
-    }
+        #off-canvas-bottom {
+            position: fixed;
+            width: 100%;
+            height: 200px;
+            left: 0;
+            bottom: -200px;
+            background: #1b405b;
+        }
 
-    #hidden {
-      display: none;
-    }
+        #top-inner,
+        #bottom-inner,
+        #left-inner,
+        #right-inner,
+        #main-inner,
+        #main-inner-custom {
+            padding: 20px 100px;
+            color: white;
+            overflow: hidden;
+        }
 
-    #sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      margin: -1px;
-      padding: 0;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      border: 0;
-    }
+        @media (max-width: 600px) {
+            #main,
+            #top,
+            #bottom,
+            #left,
+            #right {
+                float: none;
+                width: 100%;
+            }
+        }
 
-    #sr-only-shown {
-      position: static;
-      width: auto;
-      height: auto;
-      margin: 0;
-      overflow: visible;
-      clip: auto;
-    }
+        #hidden {
+            display: none;
+        }
 
-    #overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      opacity: 0.25;
-      z-index: 9998;
-      background-color: rgb(51, 51, 51);
-      display: none;
-    }
+        #sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            padding: 0;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
 
-    #overlay.overlay-visible {
-      display: block;
-    }
+        #sr-only-shown {
+            position: static;
+            width: auto;
+            height: auto;
+            margin: 0;
+            overflow: visible;
+            clip: auto;
+        }
 
-    #overlay-off-canvas {
-      position: absolute;
-      top: 0;
-      left: -300px;
-      width: 100%;
-      height: 100%;
-      opacity: 0.25;
-      z-index: 9998;
-      background-color: rgb(51, 51, 51);
-      display: none;
-    }
+        #overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.25;
+            z-index: 9998;
+            background-color: rgb(51, 51, 51);
+            display: none;
+        }
 
-    #overlay-off-canvas.overlay-visible {
-      display: block;
-    }
+        #overlay.overlay-visible {
+            display: block;
+        }
 
-    #over-container {
-      position: relative;
-      border: solid 1px black;
-    }
+        #overlay-off-canvas {
+            position: absolute;
+            top: 0;
+            left: -300px;
+            width: 100%;
+            height: 100%;
+            opacity: 0.25;
+            z-index: 9998;
+            background-color: rgb(51, 51, 51);
+            display: none;
+        }
 
-    #over-bottom {
-      display: block;
-      width: 300px;
-      padding: 100px;
-      background: rgba(128, 192, 128, 0.2);
-      margin: 100px auto;
-    }
+        #overlay-off-canvas.overlay-visible {
+            display: block;
+        }
 
-    #over-inside,
-    #over-outside,
-    #over-intersect,
-    #over-cover,
-    #over-under {
-      position: absolute;
-    }
+        #over-container {
+            position: relative;
+            border: solid 1px black;
+        }
 
-    #over-inside,
-    #over-inside-inner,
-    #over-outside,
-    #over-outside-inner,
-    #over-intersect,
-    #over-cover,
-    #over-cover-inner,
-    #over-under,
-    #over-under-inner {
-      padding: 10px;
-      max-width: 100px;
-    }
+        #over-bottom {
+            display: block;
+            width: 300px;
+            padding: 100px;
+            background: rgba(128, 192, 128, 0.2);
+            margin: 100px auto;
+        }
 
-    #over-cover {
-      width: 550px;
-      padding: 100px;
-      margin: 75px auto 75px -375px;
-      background: rgba(192, 192, 192, 0.6);
-      top: 0;
-      left: 50%;
-      max-width: none;
-    }
+        #over-inside,
+        #over-outside,
+        #over-intersect,
+        #over-cover,
+        #over-under {
+            position: absolute;
+        }
 
-    #over-cover-inner {
-      background: lightblue;
-    }
+        #over-inside,
+        #over-inside-inner,
+        #over-outside,
+        #over-outside-inner,
+        #over-intersect,
+        #over-cover,
+        #over-cover-inner,
+        #over-under,
+        #over-under-inner {
+            padding: 10px;
+            max-width: 100px;
+        }
 
-    #over-inside {
-      background: red;
-      top: 150px;
-      left: 50%;
-    }
+        #over-cover {
+            width: 550px;
+            padding: 100px;
+            margin: 75px auto 75px -375px;
+            background: rgba(192, 192, 192, 0.6);
+            top: 0;
+            left: 50%;
+            max-width: none;
+        }
 
-    #over-inside-inner {
-      background: orange;
-    }
+        #over-cover-inner {
+            background: lightblue;
+        }
 
-    #over-outside {
-      background: blue;
-      top: 0;
-      left: 0;
-    }
+        #over-inside {
+            background: red;
+            top: 150px;
+            left: 50%;
+        }
 
-    #over-outside-inner {
-      background: lightblue;
-    }
+        #over-inside-inner {
+            background: orange;
+        }
 
-    #over-intersect {
-      background: green;
-      top: 50px;
-      left: 60%;
-    }
+        #over-outside {
+            background: blue;
+            top: 0;
+            left: 0;
+        }
 
-    #over-intersect-inner {
-      background: lightgreen;
-    }
+        #over-outside-inner {
+            background: lightblue;
+        }
 
-    #over-fixed {
-      position: fixed;
-      padding: 10px;
-      max-width: 100px;
-      background: lime;
+        #over-intersect {
+            background: green;
+            top: 50px;
+            left: 60%;
+        }
 
-      top: 60%;
-      left: 30%;
-    }
+        #over-intersect-inner {
+            background: lightgreen;
+        }
 
-    #over-fixed-inner {
-      background: limegreen;
-    }
+        #over-fixed {
+            position: fixed;
+            padding: 10px;
+            max-width: 100px;
+            background: lime;
 
-    #over-under {
-      padding: 10px;
-      max-width: 100px;
+            top: 60%;
+            left: 30%;
+        }
 
-      background: brown;
-      top: 40%;
-      left: 40%;
-      z-index: -1;
-    }
+        #over-fixed-inner {
+            background: limegreen;
+        }
 
-    #over-under-inner {
-      background: lightpink;
-    }
-  </style>
+        #over-under {
+            padding: 10px;
+            max-width: 100px;
+
+            background: brown;
+            top: 40%;
+            left: 40%;
+            z-index: -1;
+        }
+
+        #over-under-inner {
+            background: lightpink;
+        }
+    </style>
 </head>
 <body>
 <div id="top">
-  Top content
-  <div id="top-inner">
-  inner Top content
-  </div>
+    Top content
+    <div id="top-inner">
+        inner Top content
+    </div>
 </div>
 
 <div id="main">
-  Main content
-  <div id="main-inner">
-    inner Main content
-    <div id="main-inner-custom">
-      inner Main content custom
+    Main content
+    <div id="main-inner">
+        inner Main content
+        <div id="main-inner-custom">
+            inner Main content custom
+        </div>
     </div>
-  </div>
 </div>
 <div id="left">
-  Left content
-  <div id="left-inner">
-    inner Left content
-  </div>
+    Left content
+    <div id="left-inner">
+        inner Left content
+    </div>
 </div>
 
 <div id="right">
-  Right content
-  <div id="right-inner">
-    inner Right content
-  </div>
+    Right content
+    <div id="right-inner">
+        inner Right content
+    </div>
 </div>
 
 <div id="bottom">
-  Bottom content
-  <div id="bottom-inner">
-    inner Bottom content
-  </div>
+    Bottom content
+    <div id="bottom-inner">
+        inner Bottom content
+    </div>
 </div>
 
 <div id="off-canvas-left">
-  Off-canvas left content
+    Off-canvas left content
 </div>
 
 <div id="off-canvas-right">
-  Off-canvas right content
+    Off-canvas right content
 </div>
 
 <div id="off-canvas-top">
-  Off-canvas top content
+    Off-canvas top content
 </div>
 
 <div id="off-canvas-bottom">
-  Off-canvas bottom content
+    Off-canvas bottom content
 </div>
 
 <div id="hidden">
-  Hidden content
+    Hidden content
 </div>
 
 <div id="sr-only">
-  Hidden content, but accessible for screen readers
+    Hidden content, but accessible for screen readers
 </div>
 
 <div id="sr-only-shown">
-  Hidden content that is accessible for screen readers, but shown after being hidden
+    Hidden content that is accessible for screen readers, but shown after being hidden
 </div>
 
 <button id="overlay-trigger" onclick="jQuery('#overlay').addClass('overlay-visible')">Show overlay</button>
 <div id="overlay"></div>
 
-<button id="overlay-off-canvas-trigger" onclick="jQuery('#overlay-off-canvas').addClass('overlay-visible')">Show off-canvas overlay</button>
+<button id="overlay-off-canvas-trigger" onclick="jQuery('#overlay-off-canvas').addClass('overlay-visible')">Show
+    off-canvas overlay
+</button>
 <div id="overlay-off-canvas"></div>
 
 <div id="over-container">
-  <div id="over-cover">
-    Text COVER over
-    <div id="over-cover-inner">
-      Text inner COVER over
+    <div id="over-cover">
+        Text COVER over
+        <div id="over-cover-inner">
+            Text inner COVER over
+        </div>
     </div>
-  </div>
 
-  <div id="over-inside">
-    Text INSIDE over
-    <div id="over-inside-inner">
-      Text inner INSIDE over
+    <div id="over-inside">
+        Text INSIDE over
+        <div id="over-inside-inner">
+            Text inner INSIDE over
+        </div>
     </div>
-  </div>
 
-  <div id="over-outside">
-    Text OUTSIDE over
-    <div id="over-outside-inner">
-      Text inner OUTSIDE over
+    <div id="over-outside">
+        Text OUTSIDE over
+        <div id="over-outside-inner">
+            Text inner OUTSIDE over
+        </div>
     </div>
-  </div>
 
-  <div id="over-intersect">
-    Text INTERSECT over
-    <div id="over-intersect-inner">
-      Text inner INTERSECT over
+    <div id="over-intersect">
+        Text INTERSECT over
+        <div id="over-intersect-inner">
+            Text inner INTERSECT over
+        </div>
     </div>
-  </div>
 
-  <div id="over-fixed">
-    Text FIXED over
-    <div id="over-fixed-inner">
-      Text inner FIXED over
+    <div id="over-fixed">
+        Text FIXED over
+        <div id="over-fixed-inner">
+            Text inner FIXED over
+        </div>
     </div>
-  </div>
 
-  <div id="over-under">
-    Text UNDER over
-    <div id="over-under-inner">
-      Text inner UNDER over
+    <div id="over-under">
+        Text UNDER over
+        <div id="over-under-inner">
+            Text inner UNDER over
+        </div>
     </div>
-  </div>
 
-  <div id="over-bottom">Text for over bottom</div>
+    <div id="over-bottom">Text for over bottom</div>
 </div>
 
 </body>
