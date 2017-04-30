@@ -44,6 +44,15 @@ class RelativityContext extends RawMinkContext
     protected $breakpoints;
 
     /**
+     * jQuery version.
+     *
+     * If set to false, jQuery will not be injected.
+     *
+     * @var string
+     */
+    protected $jqueryVersion;
+
+    /**
      * Constructor.
      *
      * @param array $parameters Settings for constructor.
@@ -62,6 +71,7 @@ class RelativityContext extends RawMinkContext
                 'default' => true,
             ],
         ];
+        $this->jqueryVersion = isset($parameters['jquery_version']) ? $parameters['jquery_version'] : '2.2.4';
     }
 
     /**
@@ -630,6 +640,24 @@ class RelativityContext extends RawMinkContext
     }
 
     /**
+     * Inject jQuery on the page.
+     */
+    protected function injectJquery()
+    {
+        $jqueryUrl = '//code.jquery.com/jquery-'.$this->jqueryVersion.'.min.js';
+        $headerScript = "
+            var head = document.getElementsByTagName('head')[0];
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = '$jqueryUrl';
+            head.appendChild(script);
+        ";
+
+        $this->getSession()->getDriver()->executeScript($headerScript);
+        $this->getSession()->wait(5000, 'typeof window.jQuery === "function"');
+    }
+
+    /**
      * Executes JS on an element provided by CSS.
      */
     protected function executeJsOnCss($selector, $script)
@@ -645,8 +673,11 @@ class RelativityContext extends RawMinkContext
         $script = str_replace('{{ELEMENT}}', "jQuery('$selector')", $script);
         $script = str_replace('{{SCRIPT}}', $script, $scriptWrapper);
         $script = str_replace('{{OFFSET}}', $this->offset, $script);
-        $driver = $this->getSession()->getDriver();
 
-        return $driver->evaluateScript($script);
+        if ($this->jqueryVersion) {
+            $this->injectJquery();
+        }
+
+        return $this->getSession()->getDriver()->evaluateScript($script);
     }
 }

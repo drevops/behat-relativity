@@ -9,7 +9,7 @@ default:
             docroot: %paths.base%/tests/behat/features/fixtures
         - IntegratedExperts\BehatScreenshot\ScreenshotContext:
           -
-            dir: %paths.base%/tests/behat/features/screenshots
+            dir: %paths.base%/screenshots
             dateTimeZone: Australia/Melbourne
             dateFormat: d-m-Y_H-i-s
         - IntegratedExperts\BehatRelativity\RelativityContext:
