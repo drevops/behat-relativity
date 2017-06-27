@@ -68,6 +68,31 @@ class RelativityContextInitializer implements ContextInitializer
     }
 
     /**
+     * Init values required for relativity context.
+     *
+     * @param \Behat\Behat\Hook\Scope\BeforeScenarioScope $scope Scenario scope.
+     *
+     * @BeforeScenario
+     */
+    public function init(BeforeScenarioScope $scope)
+    {
+        $defaultScreenSize = [];
+        foreach ($this->breakpoints as $breakpoint) {
+            if (isset($breakpoint['default']) && $breakpoint['default'] === true) {
+                $defaultScreenSize = $breakpoint;
+            }
+        }
+
+        if (count($defaultScreenSize) > 0) {
+            $this->getSession()->resizeWindow(
+              $defaultScreenSize['width'],
+              $defaultScreenSize['height'],
+              'current'
+            );
+        }
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function initializeContext(Context $context)

@@ -13,6 +13,7 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use WebDriver\Exception;
 
 /**
  * Class RelativityExtension.
@@ -56,19 +57,34 @@ class RelativityExtension implements ExtensionInterface
             children()
                 ->arrayNode('components')->
                     useAttributeAsKey('key')->
+                        info('Name of component can\'t content "-" or remember it transformed to "_" ')->
+                        isRequired()->
                     prototype('variable')->
+                      isRequired()->
                     end()->
                 end()
                 ->scalarNode('offset')->
-                    isRequired()->
+                    defaultValue(0)->
                 end()
                 ->arrayNode('breakpoints')->
                     useAttributeAsKey('key')->
-                    prototype('variable')->
+                        isRequired()->
+                    arrayPrototype()->
+                        children()->
+                            scalarNode('width')->
+                                isRequired()->
+                                    end()->
+                            scalarNode('height')->
+                                isRequired()->
+                                    end()->
+                            booleanNode('default')->
+                                defaultFalse()->
+                                    end()->
+                        end()->
                     end()->
                 end()
                 ->scalarNode('jqueryVersion')->
-                    cannotBeEmpty()->
+                    defaultValue('2.2.4')->
                     end();
     }
 
@@ -77,28 +93,7 @@ class RelativityExtension implements ExtensionInterface
      */
     public function load(ContainerBuilder $container, array $config)
     {
-        if ($this->validateConfig($config)) {
-            $definition = new Definition('IntegratedExperts\Behat\Relativity\Context\Initializer\RelativityContextInitializer', [
-                $config['components'],
-                $config['offset'],
-                $config['breakpoints'],
-                $config['jqueryVersion'],
-            ]);
-            $definition->addTag(ContextExtension::INITIALIZER_TAG, ['priority' => 0]);
-            $container->setDefinition('integratedexperts_relativity.relativity_context_initializer', $definition);
-        }
-    }
-
-    /**
-     * Function for validation got data in current config.
-     *
-     * @param array $config Current config.
-     *
-     * @return bool
-     */
-    protected function validateConfig(array $config)
-    {
-        $result = false;
+//        print_r(array_search(true, array_column($config['breakpoints'], 'default')));
 
         if (!isset($config['components'])) {
             throw new RuntimeException('Parameter components is not determine in behat config.');
@@ -112,14 +107,23 @@ class RelativityExtension implements ExtensionInterface
             throw new RuntimeException('Parameter breakpoints is not determine in behat config.');
         } elseif (!is_array($config['breakpoints'])) {
             throw new RuntimeException('Parameter breakpoints is not array.');
+        } elseif (count(array_keys(array_column($config['breakpoints'], 'default'), true)) < 1) {
+            throw new RuntimeException('One of breakpoints parameters must be default, please add to one of breakpoints (default: true) behat.yml.');
+        } elseif (count(array_keys(array_column($config['breakpoints'], 'default'), true)) > 1) {
+            throw new RuntimeException('Only one of breakpoints parameters should be default, please remove other (default: true) records in your behat.yml.');
         } elseif (!isset($config['jqueryVersion'])) {
             throw new RuntimeException('Parameter jqueryVersion is not determine in behat config.');
         } elseif (!is_string($config['jqueryVersion'])) {
             throw new RuntimeException('Parameter jqueryVersion is not string (Example: "1.12.4").');
         } else {
-            $result = true;
+            $definition = new Definition('IntegratedExperts\Behat\Relativity\Context\Initializer\RelativityContextInitializer', [
+                $config['components'],
+                $config['offset'],
+                $config['breakpoints'],
+                $config['jqueryVersion'],
+            ]);
+            $definition->addTag(ContextExtension::INITIALIZER_TAG, ['priority' => 0]);
+            $container->setDefinition('integratedexperts_relativity.relativity_context_initializer', $definition);
         }
-
-        return $result;
     }
 }

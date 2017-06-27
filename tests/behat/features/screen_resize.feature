@@ -18,14 +18,14 @@ Feature: Behat relative assertions work using breakpoints
     And I see main inner custom inside of main inner
     And I see main outside of main inner
     And I see top above main, left and right
-    And I see over-inside, over-intersect and over-cover over over-bottom
-    And I see over-inside inner, over-intersect inner and over-cover inner over over-bottom
-    And I see over-fixed and over-fixed inner over over-bottom
-    And I see over-outside and over-under not over over-bottom
-    And I see over-outside inner and over-under inner not over over-bottom
+    And I see overInside, overIntersect and overCover over overBottom
+    And I see overInside inner, overIntersect inner and overCover inner over overBottom
+    And I see overFixed and overFixed inner over overBottom
+    And I see overOutside and overUnder not over overBottom
+    And I see overOutside inner and overUnder inner not over overBottom
     And I see visible top
     And I don't see hidden
-    And I don't see off-canvas left, off-canvas right, off-canvas top and off-canvas bottom
+    And I don't see offCanvas left, offCanvas right, offCanvas top and offCanvas bottom
     And I don't see missing
     And I don't see hidden and missing
     And I see top above main
@@ -48,13 +48,13 @@ Feature: Behat relative assertions work using breakpoints
     And I see main inner custom over main inner
     And I see main outside of main inner
     And I see top above main, left and right
-    And I see over-inside, over-intersect and over-cover over over-bottom
-    And I see over-inside inner, over-intersect inner and over-cover inner over over-bottom
-    And I see over-fixed and over-fixed inner over over-bottom
+    And I see overInside, overIntersect and overCover over overBottom
+    And I see overInside inner, overIntersect inner and overCover inner over overBottom
+    And I see overFixed and overFixed inner over overBottom
     Then I save screenshot
     And I see visible top
     And I don't see hidden
-    And I don't see off-canvas left, off-canvas right, off-canvas top and off-canvas bottom
+    And I don't see offCanvas left, offCanvas right, offCanvas top and offCanvas bottom
     And I don't see missing
     And I don't see hidden and missing
     And I see top above main
@@ -76,14 +76,14 @@ Feature: Behat relative assertions work using breakpoints
     And I see main inner custom inside of main inner
     And I see main outside of main inner
     And I see top above main, left and right
-    And I see over-inside, over-intersect and over-cover over over-bottom
-    And I see over-inside inner, over-intersect inner and over-cover inner over over-bottom
-    And I see over-fixed and over-fixed inner over over-bottom
-    And I see over-outside and over-under not over over-bottom
-    And I see over-outside inner and over-under inner not over over-bottom
+    And I see overInside, overIntersect and overCover over overBottom
+    And I see overInside inner, overIntersect inner and overCover inner over overBottom
+    And I see overFixed and overFixed inner over overBottom
+    And I see overOutside and overUnder not over overBottom
+    And I see overOutside inner and overUnder inner not over overBottom
     And I see visible top
     And I don't see hidden
-    And I don't see off-canvas left, off-canvas right, off-canvas top and off-canvas bottom
+    And I don't see offCanvas left, offCanvas right, offCanvas top and offCanvas bottom
     And I don't see missing
     And I don't see hidden and missing
     And I see top above main
@@ -105,14 +105,14 @@ Feature: Behat relative assertions work using breakpoints
     And I see main inner custom inside of main inner
     And I see main outside of main inner
     And I see top above main, left and right
-    And I see over-inside, over-intersect and over-cover over over-bottom
-    And I see over-inside inner, over-intersect inner and over-cover inner over over-bottom
-    And I see over-fixed and over-fixed inner over over-bottom
-    And I see over-outside and over-under not over over-bottom
-    And I see over-outside inner and over-under inner not over over-bottom
+    And I see overInside, overIntersect and overCover over overBottom
+    And I see overInside inner, overIntersect inner and overCover inner over overBottom
+    And I see overFixed and overFixed inner over overBottom
+    And I see overOutside and overUnder not over overBottom
+    And I see overOutside inner and overUnder inner not over overBottom
     And I see visible top
     And I don't see hidden
-    And I don't see off-canvas left, off-canvas right, off-canvas top and off-canvas bottom
+    And I don't see offCanvas left, offCanvas right, offCanvas top and offCanvas bottom
     And I don't see missing
     And I don't see hidden and missing
     And I see top above main
@@ -134,14 +134,14 @@ Feature: Behat relative assertions work using breakpoints
     And I see main inner custom inside of main inner
     And I see main outside of main inner
     And I see top above main, left and right
-    And I see over-inside, over-intersect and over-cover over over-bottom
-    And I see over-inside inner, over-intersect inner and over-cover inner over over-bottom
-    And I see over-fixed and over-fixed inner over over-bottom
-    And I see over-outside and over-under not over over-bottom
-    And I see over-outside inner and over-under inner not over over-bottom
+    And I see overInside, overIntersect and overCover over overBottom
+    And I see overInside inner, overIntersect inner and overCover inner over overBottom
+    And I see overFixed and overFixed inner over overBottom
+    And I see overOutside and overUnder not over overBottom
+    And I see overOutside inner and overUnder inner not over overBottom
     And I see visible top
     And I don't see hidden
-    And I don't see off-canvas left, off-canvas right, off-canvas top and off-canvas bottom
+    And I don't see offCanvas left, offCanvas right, offCanvas top and offCanvas bottom
     And I don't see missing
     And I don't see hidden and missing
     And I see top above main
@@ -163,14 +163,14 @@ Feature: Behat relative assertions work using breakpoints
     And I see main inner custom inside of main inner
     And I see main outside of main inner
     And I see top above main, left and right
-    And I see over-inside, over-intersect and over-cover over over-bottom
-    And I see over-inside inner, over-intersect inner and over-cover inner over over-bottom
-    And I see over-fixed and over-fixed inner over over-bottom
-    And I see over-outside and over-under not over over-bottom
-    And I see over-outside inner and over-under inner not over over-bottom
+    And I see overInside, overIntersect and overCover over overBottom
+    And I see overInside inner, overIntersect inner and overCover inner over overBottom
+    And I see overFixed and overFixed inner over overBottom
+    And I see overOutside and overUnder not over overBottom
+    And I see overOutside inner and overUnder inner not over overBottom
     And I see visible top
     And I don't see hidden
-    And I don't see off-canvas left, off-canvas right, off-canvas top and off-canvas bottom
+    And I don't see offCanvas left, offCanvas right, offCanvas top and offCanvas bottom
     And I don't see missing
     And I don't see hidden and missing
     And I see top above main
