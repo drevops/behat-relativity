@@ -75,7 +75,7 @@ default:
 ```
 
 ### Note
-> In extension components parameter key should not have a dash `-` symbol, or it will transformed to underscore `_`.
+> In extension parameter components name should not have a dash `-` symbol, or it will transformed to underscore `_`.
 
 ##### For example in your behat.yml
 ```yaml

@@ -80,9 +80,9 @@ class RelativityContext extends RawMinkContext implements RelativityContextInter
 
         if (count($defaultScreenSize) > 0) {
             $this->getSession()->resizeWindow(
-              $defaultScreenSize['width'],
-              $defaultScreenSize['height'],
-              'current'
+                $defaultScreenSize['width'],
+                $defaultScreenSize['height'],
+                'current'
             );
         }
     }
@@ -402,7 +402,8 @@ class RelativityContext extends RawMinkContext implements RelativityContextInter
      *
      * @throws \Exception If at least one assertion fails.
      */
-    protected function dispatcher($position, $subject, $others, $scrollToOthers = true) {
+    protected function dispatcher($position, $subject, $others, $scrollToOthers = true)
+    {
         $errors = [];
         $subject = $this->parseComponents($subject);
         $others = $this->parseComponents($others);
@@ -506,7 +507,8 @@ class RelativityContext extends RawMinkContext implements RelativityContextInter
      * @throws \RuntimeException If incorrect position is provided.
      * @throws \Exception If unable to retrieve component dimensions.
      */
-    protected function assertPosition($position, $component1, $component2, $scrollToComponent2 = true) {
+    protected function assertPosition($position, $component1, $component2, $scrollToComponent2 = true)
+    {
         $allowed = [
           'left',
           'right',
@@ -605,7 +607,8 @@ class RelativityContext extends RawMinkContext implements RelativityContextInter
     /**
      * Check if two rectangles intersect.
      */
-    protected function rectanglesIntersect($x1, $y1, $width1, $height1, $x2, $y2, $width2, $height2) {
+    protected function rectanglesIntersect($x1, $y1, $width1, $height1, $x2, $y2, $width2, $height2)
+    {
         return !($x1 >= $x2 + $width2 || $x1 + $width1 <= $x2 || $y1 >= $y2 + $height2 || $y1 + $height1 <= $y2);
     }
 

@@ -57,7 +57,7 @@ class RelativityExtension implements ExtensionInterface
             children()
                 ->arrayNode('components')->
                     useAttributeAsKey('key')->
-                        info('Name of component can\'t content "-" or remember it transformed to "_" ')->
+                        info('Name of component: shouldn\'t content dash "-" or remember it transformed to underscore "_" ')->
                         isRequired()->
                     prototype('variable')->
                       isRequired()->
@@ -68,16 +68,20 @@ class RelativityExtension implements ExtensionInterface
                 end()
                 ->arrayNode('breakpoints')->
                     useAttributeAsKey('key')->
+                        info('Name of devise or screen size.')->
                         isRequired()->
                     arrayPrototype()->
                         children()->
                             scalarNode('width')->
+                                info('Screen width.')->
                                 isRequired()->
                                     end()->
                             scalarNode('height')->
                                 isRequired()->
+                                    info('Screen height.')->
                                     end()->
                             booleanNode('default')->
+                                info('Set screen size as default.')->
                                 defaultFalse()->
                                     end()->
                         end()->
@@ -93,28 +97,10 @@ class RelativityExtension implements ExtensionInterface
      */
     public function load(ContainerBuilder $container, array $config)
     {
-//        print_r(array_search(true, array_column($config['breakpoints'], 'default')));
-
-        if (!isset($config['components'])) {
-            throw new RuntimeException('Parameter components is not determine in behat config.');
-        } elseif (!is_array($config['components'])) {
-            throw new RuntimeException('Parameter components is not array.');
-        } elseif (!isset($config['offset'])) {
-            throw new RuntimeException('Parameter offset is not determine in behat config.');
-        } elseif (!is_int($config['offset'])) {
-            throw new RuntimeException('Parameter offset is not integer.');
-        } elseif (!isset($config['breakpoints'])) {
-            throw new RuntimeException('Parameter breakpoints is not determine in behat config.');
-        } elseif (!is_array($config['breakpoints'])) {
-            throw new RuntimeException('Parameter breakpoints is not array.');
-        } elseif (count(array_keys(array_column($config['breakpoints'], 'default'), true)) < 1) {
+        if (count(array_keys(array_column($config['breakpoints'], 'default'), true)) < 1) {
             throw new RuntimeException('One of breakpoints parameters must be default, please add to one of breakpoints (default: true) behat.yml.');
         } elseif (count(array_keys(array_column($config['breakpoints'], 'default'), true)) > 1) {
             throw new RuntimeException('Only one of breakpoints parameters should be default, please remove other (default: true) records in your behat.yml.');
-        } elseif (!isset($config['jqueryVersion'])) {
-            throw new RuntimeException('Parameter jqueryVersion is not determine in behat config.');
-        } elseif (!is_string($config['jqueryVersion'])) {
-            throw new RuntimeException('Parameter jqueryVersion is not string (Example: "1.12.4").');
         } else {
             $definition = new Definition('IntegratedExperts\Behat\Relativity\Context\Initializer\RelativityContextInitializer', [
                 $config['components'],
