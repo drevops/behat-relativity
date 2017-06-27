@@ -5,7 +5,7 @@
  * Relative components assertions.
  */
 
-namespace IntegratedExperts\BehatRelativity;
+namespace IntegratedExperts\Behat\Relativity\Context;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
@@ -14,14 +14,13 @@ use Behat\MinkExtension\Context\RawMinkContext;
 /**
  * Class RelativeTrait.
  */
-class RelativityContext extends RawMinkContext
+class RelativityContext extends RawMinkContext implements RelativityContextInterface
 {
 
     /**
      * Array of relative components.
      *
      * Array keys are component names and values are CSS selectors.
-     * This values must be passed via constructor from the calling class.
      *
      * @var array
      */
@@ -53,25 +52,14 @@ class RelativityContext extends RawMinkContext
     protected $jqueryVersion;
 
     /**
-     * Constructor.
-     *
-     * @param array $parameters Settings for constructor.
+     * {@inheritdoc}
      */
-    public function __construct($parameters = [])
+    public function setParameters($components, $offset, $breakpoints, $jqueryVersion)
     {
-        // @todo: Add validation to make sure that only correctly formatted component values are provided.
-        $this->components = isset($parameters['components']) ? $parameters['components'] : ['page' => "#page"];
-        // @todo: Add validation to make sure that only correctly formatted offset value is provided.
-        $this->offset = isset($parameters['offset']) ? $parameters['offset'] : 0;
-        // @todo: Add validation to make sure that only correctly formatted breakpoint values are provided.
-        $this->breakpoints = isset($parameters['breakpoints']) ? $parameters['breakpoints'] : [
-            'desktop' => [
-                'width' => 992,
-                'height' => 1024,
-                'default' => true,
-            ],
-        ];
-        $this->jqueryVersion = isset($parameters['jquery_version']) ? $parameters['jquery_version'] : '2.2.4';
+        $this->components = $components;
+        $this->offset = $offset;
+        $this->breakpoints = $breakpoints;
+        $this->jqueryVersion = $jqueryVersion;
     }
 
     /**
@@ -94,13 +82,22 @@ class RelativityContext extends RawMinkContext
             );
         } catch (\Exception $e) {
             if (!isset($this->breakpoints[$screen])) {
-                $errors[] = sprintf("Screen size '%s' is not defined in behat.yml", $screen);
+                $errors[] = sprintf(
+                    "Screen size '%s' is not defined in behat.yml",
+                    $screen
+                );
             } else {
                 if (!isset($this->breakpoints[$screen]['width'])) {
-                    $errors[] = sprintf("Screen size '%s' parameter 'width' is not defined in behat.yml", $screen);
+                    $errors[] = sprintf(
+                        "Screen size '%s' parameter 'width' is not defined in behat.yml",
+                        $screen
+                    );
                 }
                 if (!isset($this->breakpoints[$screen]['height'])) {
-                    $errors[] = sprintf("Screen size '%s' parameter 'height' is not defined in behat.yml", $screen);
+                    $errors[] = sprintf(
+                        "Screen size '%s' parameter 'height' is not defined in behat.yml",
+                        $screen
+                    );
                 }
             }
         }
@@ -124,10 +121,16 @@ class RelativityContext extends RawMinkContext
         if (count($subject) === 1) {
             $pass = $this->componentIsFocused($this->components[$subject[0]]);
             if (!$pass) {
-                $errors[] = sprintf("Component '%s' (%s) is not focused", $subject, $this->components[$subject]);
+                $errors[] = sprintf(
+                    "Component '%s' (%s) is not focused",
+                    $subject,
+                    $this->components[$subject]
+                );
             }
         } else {
-            $errors[] = sprintf("More than one component provided, focus can only exist on a single element.");
+            $errors[] = sprintf(
+                "More than one component provided, focus can only exist on a single element."
+            );
         }
 
         if (count($errors) > 0) {
@@ -164,7 +167,10 @@ class RelativityContext extends RawMinkContext
             }
 
             $session = $this->getSession();
-            $xpath = $session->getSelectorsHandler()->selectorToXpath('css', $this->components[$subject]);
+            $xpath = $session->getSelectorsHandler()->selectorToXpath(
+                'css',
+                $this->components[$subject]
+            );
 
             try {
                 $this->getSession()->getDriver()->click($xpath);
@@ -200,7 +206,11 @@ class RelativityContext extends RawMinkContext
         }
 
         if (count($defaultScreenSize) > 0) {
-            $this->getSession()->resizeWindow($defaultScreenSize['width'], $defaultScreenSize['height'], 'current');
+            $this->getSession()->resizeWindow(
+                $defaultScreenSize['width'],
+                $defaultScreenSize['height'],
+                'current'
+            );
         }
     }
 
@@ -322,7 +332,11 @@ class RelativityContext extends RawMinkContext
         foreach ($subjects as $subject) {
             $pass = $this->componentIsVisible($this->components[$subject]);
             if (!$pass) {
-                $errors[] = sprintf("Component '%s' (%s) is not visible", $subject, $this->components[$subject]);
+                $errors[] = sprintf(
+                    "Component '%s' (%s) is not visible",
+                    $subject,
+                    $this->components[$subject]
+                );
             }
         }
 
@@ -345,7 +359,11 @@ class RelativityContext extends RawMinkContext
         foreach ($subjects as $subject) {
             $pass = !$this->componentIsVisible($this->components[$subject]);
             if (!$pass) {
-                $errors[] = sprintf("Component '%s' (%s) is not invisible", $subject, $this->components[$subject]);
+                $errors[] = sprintf(
+                    "Component '%s' (%s) is not invisible",
+                    $subject,
+                    $this->components[$subject]
+                );
             }
         }
 
@@ -376,15 +394,20 @@ class RelativityContext extends RawMinkContext
      *
      * Note that assertions for all elements will be assessed before failing.
      *
-     * @param string $position     Position name.
-     * @param string $subject      Subject name as a string.
-     * @param string $others       Other names as a string.
-     * @param bool $scrollToOthers Optional flag to scroll to other components when performing geometry retrieval.
+     * @param string $position Position name.
+     * @param string $subject Subject name as a string.
+     * @param string $others Other names as a string.
+     * @param bool $scrollToOthers Optional flag to scroll to other components
+     *   when performing geometry retrieval.
      *
      * @throws \Exception If at least one assertion fails.
      */
-    protected function dispatcher($position, $subject, $others, $scrollToOthers = true)
-    {
+    protected function dispatcher(
+        $position,
+        $subject,
+        $others,
+        $scrollToOthers = true
+    ) {
         $errors = [];
         $subject = $this->parseComponents($subject);
         $others = $this->parseComponents($others);
@@ -402,7 +425,12 @@ class RelativityContext extends RawMinkContext
                         $positive = false;
                     }
 
-                    $pass = $this->assertPosition($positionType, $subjectItem, $otherItem, $scrollToOthers);
+                    $pass = $this->assertPosition(
+                        $positionType,
+                        $subjectItem,
+                        $otherItem,
+                        $scrollToOthers
+                    );
                     // Assertion did not pass when expected positive result, but got
                     // fail.
                     if (!$pass && $positive) {
@@ -436,19 +464,29 @@ class RelativityContext extends RawMinkContext
     /**
      * Parse component names.
      *
-     * @param string $text Component name as a string usually taken from the test step definition.
+     * @param string $text Component name as a string usually taken from the
+     *   test step definition.
      *
      * @return array Array of parsed components.
      *
-     * @throws \Exception If provided components are not a part of the set of pre-configured components.
+     * @throws \Exception If provided components are not a part of the set of
+     *   pre-configured components.
      */
     protected function parseComponents($text)
     {
         $components = preg_split("/\s*(,|and)\s*/", $text);
 
-        $invalidComponents = array_diff($components, array_keys($this->components));
+        $invalidComponents = array_diff(
+            $components,
+            array_keys($this->components)
+        );
         if (count($invalidComponents) > 0) {
-            throw new \Exception(sprintf('Invalid components provided: %s', implode(',', $invalidComponents)));
+            throw new \Exception(
+                sprintf(
+                    'Invalid components provided: %s',
+                    implode(',', $invalidComponents)
+                )
+            );
         }
 
         return $components;
@@ -460,24 +498,43 @@ class RelativityContext extends RawMinkContext
      * @todo Extend this to handle 'over' and 'under' absolutely positioned
      * elements.
      *
-     * @param string $position         Position identifier. One of: left, right, above, below, inside, outside.
-     * @param string $component1       Name of the first component.
-     * @param string $component2       Name of the second component.
-     * @param bool $scrollToComponent2 Optional flag to scroll to component2 when performing geometry retrieval.
+     * @param string $position Position identifier. One of: left, right, above,
+     *   below, inside, outside.
+     * @param string $component1 Name of the first component.
+     * @param string $component2 Name of the second component.
+     * @param bool $scrollToComponent2 Optional flag to scroll to component2
+     *   when performing geometry retrieval.
      *
-     * @return bool True if components are positioned relatively correct, false otherwise.
+     * @return bool True if components are positioned relatively correct, false
+     *   otherwise.
      *
      * @throws \RuntimeException If incorrect position is provided.
      * @throws \Exception If unable to retrieve component dimensions.
      */
-    protected function assertPosition($position, $component1, $component2, $scrollToComponent2 = true)
-    {
-        $allowed = ['left', 'right', 'above', 'below', 'inside', 'outside', 'over'];
+    protected function assertPosition(
+        $position,
+        $component1,
+        $component2,
+        $scrollToComponent2 = true
+    ) {
+        $allowed = [
+          'left',
+          'right',
+          'above',
+          'below',
+          'inside',
+          'outside',
+          'over',
+        ];
         if (!in_array($position, $allowed)) {
-            throw new \RuntimeException(sprintf("Invalid position %s specified", $position));
+            throw new \RuntimeException(
+                sprintf("Invalid position %s specified", $position)
+            );
         }
 
-        $c1Geometry = $this->getComponentGeometry($this->components[$component1]);
+        $c1Geometry = $this->getComponentGeometry(
+            $this->components[$component1]
+        );
         if (!$c1Geometry) {
             throw new \Exception(
                 sprintf(
@@ -488,7 +545,10 @@ class RelativityContext extends RawMinkContext
             );
         }
 
-        $c2Geometry = $this->getComponentGeometry($this->components[$component2], $scrollToComponent2);
+        $c2Geometry = $this->getComponentGeometry(
+            $this->components[$component2],
+            $scrollToComponent2
+        );
         if (!$c2Geometry) {
             throw new \Exception(
                 sprintf(
@@ -555,8 +615,16 @@ class RelativityContext extends RawMinkContext
     /**
      * Check if two rectangles intersect.
      */
-    protected function rectanglesIntersect($x1, $y1, $width1, $height1, $x2, $y2, $width2, $height2)
-    {
+    protected function rectanglesIntersect(
+        $x1,
+        $y1,
+        $width1,
+        $height1,
+        $x2,
+        $y2,
+        $width2,
+        $height2
+    ) {
         return !($x1 >= $x2 + $width2 || $x1 + $width1 <= $x2 || $y1 >= $y2 + $height2 || $y1 + $height1 <= $y2);
     }
 
@@ -564,13 +632,14 @@ class RelativityContext extends RawMinkContext
      * Get relative component geometry data.
      *
      * Note that we are using oversimplified way to determine z-index of the
-     * element without using Stacking Contexts, but this should cover majority of
-     * cases.
+     * element without using Stacking Contexts, but this should cover majority
+     * of cases.
      *
      * @param string $selector CSS selector.
-     * @param bool $doScroll   Whether to scroll to component.
+     * @param bool $doScroll Whether to scroll to component.
      *
-     * @return array|bool Array of component geometry: width, height, top, left or false if component is not visible.
+     * @return array|bool Array of component geometry: width, height, top, left
+     *   or false if component is not visible.
      */
     protected function getComponentGeometry($selector, $doScroll = true)
     {
@@ -599,7 +668,8 @@ class RelativityContext extends RawMinkContext
      *
      * @param string $selector CSS selector.
      *
-     * @return bool True if element is focused, false if not focused or element is not present on the page.
+     * @return bool True if element is focused, false if not focused or element
+     *   is not present on the page.
      */
     protected function componentIsFocused($selector)
     {
@@ -618,7 +688,8 @@ class RelativityContext extends RawMinkContext
      *
      * @param string $selector CSS selector.
      *
-     * @return bool True if element is visible, false if not visible or element is not present on the page.
+     * @return bool True if element is visible, false if not visible or element
+     *   is not present on the page.
      */
     protected function componentIsVisible($selector)
     {

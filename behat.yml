@@ -8,59 +8,7 @@ default:
           -
             docroot: %paths.base%/tests/behat/features/fixtures
         - IntegratedExperts\Behat\Screenshot\Context\ScreenshotContext
-        - IntegratedExperts\BehatRelativity\RelativityContext:
-          -
-            # Supported screen breakpoints.
-            breakpoints:
-              mobile:
-                width: 320
-                height: 480
-              tablet:
-                width: 768
-                height: 1024
-              desktop:
-                width: 992
-                height: 1024
-                default: true
-              desktop_large:
-                width: 1200
-                height: 900
-            # Vertical offset.
-            offset: 60
-            # List of test components.
-            components:
-              'page': "#page"
-              'main': "#main"
-              'top': "#top"
-              'bottom': "#bottom"
-              'left': "#left"
-              'right': "#right"
-              'main inner': "#main-inner"
-              'hidden': "#hidden"
-              'missing': "#non-existing"
-              'off-canvas left': "#off-canvas-left"
-              'off-canvas right': "#off-canvas-right"
-              'off-canvas top': "#off-canvas-top"
-              'off-canvas bottom': "#off-canvas-bottom"
-              'sr only': "#sr-only"
-              'sr only shown': "#sr-only-shown"
-              'overlay': "#overlay"
-              'overlay trigger': "#overlay-trigger"
-              'off-canvas overlay': "#overlay-off-canvas"
-              'off-canvas overlay trigger': "#overlay-off-canvas-trigger"
-              'over-bottom': "#over-bottom"
-              'over-inside': "#over-inside"
-              'over-inside inner': "#over-inside-inner"
-              'over-outside': "#over-outside"
-              'over-outside inner': "#over-outside-inner"
-              'over-intersect': "#over-intersect"
-              'over-intersect inner': "#over-intersect-inner"
-              'over-cover': "#over-cover"
-              'over-cover inner': "#over-cover-inner"
-              'over-fixed': "#over-fixed"
-              'over-fixed inner': "#over-fixed-inner"
-              'over-under': "#over-under"
-              'over-under inner': "#over-under-inner"
+        - IntegratedExperts\Behat\Relativity\Context\RelativityContext
         - FeatureContext
 
   extensions:
@@ -78,3 +26,57 @@ default:
       dir: %paths.base%/screenshots
       fail: true
       purge: false
+    IntegratedExperts\Behat\Relativity\RelativityExtension:
+      # Supported screen breakpoints.
+      breakpoints:
+        mobile:
+          width: 320
+          height: 480
+        tablet:
+          width: 768
+          height: 1024
+        desktop:
+          width: 992
+          height: 1024
+          default: true
+        desktop_large:
+          width: 1200
+          height: 900
+      # Vertical offset.
+      offset: 60
+      # jQuery
+      jqueryVersion: 2.2.4
+      # List of test components.
+      components:
+        'page': "#page"
+        'main': "#main"
+        'top': "#top"
+        'bottom': "#bottom"
+        'left': "#left"
+        'right': "#right"
+        'main inner': "#main-inner"
+        'hidden': "#hidden"
+        'missing': "#non-existing"
+        'off-canvas left': "#off-canvas-left"
+        'off-canvas right': "#off-canvas-right"
+        'off-canvas top': "#off-canvas-top"
+        'off-canvas bottom': "#off-canvas-bottom"
+        'sr only': "#sr-only"
+        'sr only shown': "#sr-only-shown"
+        'overlay': "#overlay"
+        'overlay trigger': "#overlay-trigger"
+        'off-canvas overlay': "#overlay-off-canvas"
+        'off-canvas overlay trigger': "#overlay-off-canvas-trigger"
+        'over-bottom': "#over-bottom"
+        'over-inside': "#over-inside"
+        'over-inside inner': "#over-inside-inner"
+        'over-outside': "#over-outside"
+        'over-outside inner': "#over-outside-inner"
+        'over-intersect': "#over-intersect"
+        'over-intersect inner': "#over-intersect-inner"
+        'over-cover': "#over-cover"
+        'over-cover inner': "#over-cover-inner"
+        'over-fixed': "#over-fixed"
+        'over-fixed inner': "#over-fixed-inner"
+        'over-under': "#over-under"
+        'over-under inner': "#over-under-inner"
