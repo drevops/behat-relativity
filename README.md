@@ -36,7 +36,7 @@ Feature: Google example test
 ```
 
 ## Installation
-`composer require integratedexperts/behat-relativity`
+`composer require --dev integratedexperts/behat-relativity`
 
 ## usage
 Example `behat.yml`:
