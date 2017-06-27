@@ -45,33 +45,52 @@ default:
   suites:
     default:
       contexts:
-        - IntegratedExperts\BehatRelativity\RelativityContext:
-          -
-            # Supported screen breakpoints.
-            breakpoints:
-              mobile:
-                width: 320
-                height: 480
-              tablet:
-                width: 768
-                height: 1024
-              desktop:
-                width: 992
-                height: 1024
-                default: true
-              desktop_large:
-                width: 1200
-                height: 900
-            # Vertical offset.
-            offset: 60
-            # List of site-wide components.
-            components:
-              'page': "#page"
-              'main': "#main"
-              'top': "#top"
-              'bottom': "#bottom"
+        - IntegratedExperts\Behat\Relativity\Context\RelativityContext
         - FeatureContext
+    
+  extensions:
+    IntegratedExperts\Behat\Relativity\RelativityExtension:
+      breakpoints:
+        mobile:
+          width: 320
+          height: 480
+        tablet:
+          width: 768
+          height: 1024
+        desktop:
+          width: 992
+          height: 1024
+          default: true
+        desktop_large:
+          width: 1200
+          height: 900
+      # Vertical offset.
+      offset: 60
+      # List of site-wide components.
+      components:
+        'page': "#page"
+        'main': "#main"
+        'top': "#top"
+        'bottom': "#bottom"
 ```
+
+### Note
+> In extension components parameter key should not have a dash `-` symbol, or it will transformed to underscore `_`.
+
+##### For example in your behat.yml
+```yaml
+extensions:
+  IntegratedExperts\Behat\Relativity\RelativityExtension:
+    components:
+      'page-wrapper': "#page"
+```
+##### Will converted in context to:
+```php
+$this->components = [
+    "page_wrapper" => "#page"
+  ]
+```
+
 
 ## Local development
 ### Preparing local environment
