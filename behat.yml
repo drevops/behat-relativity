@@ -7,11 +7,7 @@ default:
         - IntegratedExperts\BehatPhpServer\PhpServerContext:
           -
             docroot: %paths.base%/tests/behat/features/fixtures
-        - IntegratedExperts\BehatScreenshot\ScreenshotContext:
-          -
-            dir: %paths.base%/screenshots
-            dateTimeZone: Australia/Melbourne
-            dateFormat: d-m-Y_H-i-s
+        - IntegratedExperts\Behat\Screenshot\Context\ScreenshotContext
         - IntegratedExperts\BehatRelativity\RelativityContext:
           -
             # Supported screen breakpoints.
@@ -78,3 +74,7 @@ default:
         wd_host: "http://localhost:4444/wd/hub"
         capabilities: { "browser": "chrome", "version": "*" }
       javascript_session: selenium2
+    IntegratedExperts\Behat\Screenshot\ScreenshotExtension:
+      dir: %paths.base%/screenshots
+      fail: true
+      purge: false
