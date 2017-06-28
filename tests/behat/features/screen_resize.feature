@@ -5,7 +5,8 @@ Feature: Behat relative assertions work using breakpoints
 
   Background:
     Given I define components:
-    | main inner custom | #main-inner-custom |
+      | main inner custom | #main-inner-custom |
+      | viewport custom   | #viewport-custom   |
 
   @javascript @phpserver
   Scenario: Screen default size is used when no size is specified
@@ -178,4 +179,11 @@ Feature: Behat relative assertions work using breakpoints
     And I see sr only shown below bottom
     And I see top and main above bottom
     And I see top, main and left above bottom
+    Then I save screenshot
+
+  @javascript @phpserver
+  Scenario: Viewport size is calculated correctly when screen is resized.
+    Given I am viewing the site on a desktop device
+    When I am on the test page
+    Then I see visible viewport custom
     Then I save screenshot

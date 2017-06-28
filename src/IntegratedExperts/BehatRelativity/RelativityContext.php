@@ -10,6 +10,7 @@ namespace IntegratedExperts\BehatRelativity;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\RawMinkContext;
+use Symfony\Component\Yaml\Exception\RuntimeException;
 
 /**
  * Class RelativeTrait.
@@ -84,30 +85,19 @@ class RelativityContext extends RawMinkContext
      */
     public function iAmViewingTheSiteOnScreen($screen)
     {
-        $errors = [];
-
-        try {
-            $this->getSession()->resizeWindow(
-                $this->breakpoints[$screen]['width'],
-                $this->breakpoints[$screen]['height'],
-                'current'
-            );
-        } catch (\Exception $e) {
-            if (!isset($this->breakpoints[$screen])) {
-                $errors[] = sprintf("Screen size '%s' is not defined in behat.yml", $screen);
-            } else {
-                if (!isset($this->breakpoints[$screen]['width'])) {
-                    $errors[] = sprintf("Screen size '%s' parameter 'width' is not defined in behat.yml", $screen);
-                }
-                if (!isset($this->breakpoints[$screen]['height'])) {
-                    $errors[] = sprintf("Screen size '%s' parameter 'height' is not defined in behat.yml", $screen);
-                }
-            }
+        if (!isset($this->breakpoints[$screen])) {
+            throw new RuntimeException(sprintf("Screen size '%s' is not defined in behat.yml", $screen));
         }
 
-        if (count($errors) > 0) {
-            throw new \Exception(implode("\n", $errors));
+        if (!isset($this->breakpoints[$screen]['width'])) {
+            throw new RuntimeException(sprintf("Screen size '%s' parameter 'width' is not defined in behat.yml", $screen));
         }
+
+        if (!isset($this->breakpoints[$screen]['height'])) {
+            throw new RuntimeException(sprintf("Screen size '%s' parameter 'height' is not defined in behat.yml", $screen));
+        }
+
+        $this->resizeViewport($this->breakpoints[$screen]['width'], $this->breakpoints[$screen]['height']);
     }
 
     /**
@@ -192,16 +182,19 @@ class RelativityContext extends RawMinkContext
      */
     public function init(BeforeScenarioScope $scope)
     {
-        $defaultScreenSize = [];
-        foreach ($this->breakpoints as $breakpoint) {
-            if (isset($breakpoint['default']) && $breakpoint['default'] === true) {
-                $defaultScreenSize = $breakpoint;
+        $defaults = [];
+        foreach ($this->breakpoints as $name => $config) {
+            if (isset($config['default']) && $config['default'] === true) {
+                $defaults[] = $name;
             }
         }
 
-        if (count($defaultScreenSize) > 0) {
-            $this->getSession()->resizeWindow($defaultScreenSize['width'], $defaultScreenSize['height'], 'current');
+        if (count($defaults) != 1) {
+            throw new RuntimeException(sprintf('One and only one of the provided breakpoints must be configured as default'));
         }
+
+        $default = reset($defaults);
+        $this->iAmViewingTheSiteOnScreen($default);
     }
 
     /**
@@ -376,10 +369,12 @@ class RelativityContext extends RawMinkContext
      *
      * Note that assertions for all elements will be assessed before failing.
      *
-     * @param string $position     Position name.
-     * @param string $subject      Subject name as a string.
-     * @param string $others       Other names as a string.
-     * @param bool $scrollToOthers Optional flag to scroll to other components when performing geometry retrieval.
+     * @param string $position       Position name.
+     * @param string $subject        Subject name as a string.
+     * @param string $others         Other names as a string.
+     * @param bool   $scrollToOthers Optional flag to scroll to other
+     *                               components when performing geometry
+     *                               retrieval.
      *
      * @throws \Exception If at least one assertion fails.
      */
@@ -436,11 +431,13 @@ class RelativityContext extends RawMinkContext
     /**
      * Parse component names.
      *
-     * @param string $text Component name as a string usually taken from the test step definition.
+     * @param string $text Component name as a string usually taken from the
+     *                     test step definition.
      *
      * @return array Array of parsed components.
      *
-     * @throws \Exception If provided components are not a part of the set of pre-configured components.
+     * @throws \Exception If provided components are not a part of the set of
+     *                    pre-configured components.
      */
     protected function parseComponents($text)
     {
@@ -460,19 +457,30 @@ class RelativityContext extends RawMinkContext
      * @todo Extend this to handle 'over' and 'under' absolutely positioned
      * elements.
      *
-     * @param string $position         Position identifier. One of: left, right, above, below, inside, outside.
-     * @param string $component1       Name of the first component.
-     * @param string $component2       Name of the second component.
-     * @param bool $scrollToComponent2 Optional flag to scroll to component2 when performing geometry retrieval.
+     * @param string $position           Position identifier. One of: left,
+     *                                   right, above, below, inside, outside.
+     * @param string $component1         Name of the first component.
+     * @param string $component2         Name of the second component.
+     * @param bool   $scrollToComponent2 Optional flag to scroll to component2
+     *                                   when performing geometry retrieval.
      *
-     * @return bool True if components are positioned relatively correct, false otherwise.
+     * @return bool True if components are positioned relatively correct, false
+     *              otherwise.
      *
      * @throws \RuntimeException If incorrect position is provided.
      * @throws \Exception If unable to retrieve component dimensions.
      */
     protected function assertPosition($position, $component1, $component2, $scrollToComponent2 = true)
     {
-        $allowed = ['left', 'right', 'above', 'below', 'inside', 'outside', 'over'];
+        $allowed = [
+            'left',
+            'right',
+            'above',
+            'below',
+            'inside',
+            'outside',
+            'over',
+        ];
         if (!in_array($position, $allowed)) {
             throw new \RuntimeException(sprintf("Invalid position %s specified", $position));
         }
@@ -561,16 +569,46 @@ class RelativityContext extends RawMinkContext
     }
 
     /**
+     * Resize viewport to specified size.
+     *
+     * Also handles border/chrome of the browser to make sure that viewport
+     * has exact size.
+     *
+     * @param int $width
+     *   Viewport width in pixels.
+     * @param int $height
+     *   Viewport height in pixels.
+     */
+    protected function resizeViewport($width, $height)
+    {
+        $padding = $this->getSession()->getDriver()->evaluateScript("
+            return {
+                w: window.outerWidth - window.innerWidth,
+                h: window.outerHeight - window.innerHeight 
+            };
+        ");
+
+        $this->getSession()
+            ->getDriver()
+            ->resizeWindow(
+                $width + $padding['w'],
+                $height + $padding['h'],
+                'current'
+            );
+    }
+
+    /**
      * Get relative component geometry data.
      *
      * Note that we are using oversimplified way to determine z-index of the
-     * element without using Stacking Contexts, but this should cover majority of
-     * cases.
+     * element without using Stacking Contexts, but this should cover majority
+     * of cases.
      *
      * @param string $selector CSS selector.
-     * @param bool $doScroll   Whether to scroll to component.
+     * @param bool   $doScroll Whether to scroll to component.
      *
-     * @return array|bool Array of component geometry: width, height, top, left or false if component is not visible.
+     * @return array|bool Array of component geometry: width, height, top, left
+     *                    or false if component is not visible.
      */
     protected function getComponentGeometry($selector, $doScroll = true)
     {
@@ -599,7 +637,8 @@ class RelativityContext extends RawMinkContext
      *
      * @param string $selector CSS selector.
      *
-     * @return bool True if element is focused, false if not focused or element is not present on the page.
+     * @return bool True if element is focused, false if not focused or element
+     *              is not present on the page.
      */
     protected function componentIsFocused($selector)
     {
@@ -618,7 +657,8 @@ class RelativityContext extends RawMinkContext
      *
      * @param string $selector CSS selector.
      *
-     * @return bool True if element is visible, false if not visible or element is not present on the page.
+     * @return bool True if element is visible, false if not visible or element
+     *              is not present on the page.
      */
     protected function componentIsVisible($selector)
     {
