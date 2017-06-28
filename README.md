@@ -36,7 +36,7 @@ Feature: Google example test
 ```
 
 ## Installation
-`composer require integratedexperts/behat-relativity`
+`composer require --dev integratedexperts/behat-relativity`
 
 ## usage
 Example `behat.yml`:
@@ -73,24 +73,6 @@ default:
         'top': "#top"
         'bottom': "#bottom"
 ```
-
-### Note
-> In extension parameter components name should not have a dash `-` symbol, or it will transformed to underscore `_`.
-
-##### For example in your behat.yml
-```yaml
-extensions:
-  IntegratedExperts\Behat\Relativity\RelativityExtension:
-    components:
-      'page-wrapper': "#page"
-```
-##### Will converted in context to:
-```php
-$this->components = [
-    "page_wrapper" => "#page"
-  ]
-```
-
 
 ## Local development
 ### Preparing local environment

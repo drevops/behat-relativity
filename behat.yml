@@ -8,7 +8,7 @@ default:
           -
             docroot: %paths.base%/tests/behat/features/fixtures
         - IntegratedExperts\Behat\Screenshot\Context\ScreenshotContext
-        - IntegratedExperts\Behat\Relativity\Context\RelativityContext
+        - IntegratedExperts\BehatRelativity\Context\RelativityContext
         - FeatureContext
 
   extensions:
@@ -26,8 +26,7 @@ default:
       dir: %paths.base%/screenshots
       fail: true
       purge: false
-    IntegratedExperts\Behat\Relativity\RelativityExtension:
-      # Supported screen breakpoints.
+    IntegratedExperts\BehatRelativity\RelativityExtension:
       breakpoints:
         mobile:
           width: 320
@@ -45,7 +44,7 @@ default:
       # Vertical offset.
       offset: 60
       # jQuery
-      jqueryVersion: 2.2.4
+      jquery_version: 2.2.4
       # List of test components.
       components:
         'page': "#page"
@@ -57,26 +56,26 @@ default:
         'main inner': "#main-inner"
         'hidden': "#hidden"
         'missing': "#non-existing"
-        'offCanvas left': "#off-canvas-left"
-        'offCanvas right': "#off-canvas-right"
-        'offCanvas top': "#off-canvas-top"
-        'offCanvas bottom': "#off-canvas-bottom"
+        'off-canvas left': "#off-canvas-left"
+        'off-canvas right': "#off-canvas-right"
+        'off-canvas top': "#off-canvas-top"
+        'off-canvas bottom': "#off-canvas-bottom"
         'sr only': "#sr-only"
         'sr only shown': "#sr-only-shown"
         'overlay': "#overlay"
         'overlay trigger': "#overlay-trigger"
-        'offCanvas overlay': "#overlay-off-canvas"
-        'offCanvas overlay trigger': "#overlay-off-canvas-trigger"
-        'overBottom': "#over-bottom"
-        'overInside': "#over-inside"
-        'overInside inner': "#over-inside-inner"
-        'overOutside': "#over-outside"
-        'overOutside inner': "#over-outside-inner"
-        'overIntersect': "#over-intersect"
-        'overIntersect inner': "#over-intersect-inner"
-        'overCover': "#over-cover"
-        'overCover inner': "#over-cover-inner"
-        'overFixed': "#over-fixed"
-        'overFixed inner': "#over-fixed-inner"
-        'overUnder': "#over-under"
-        'overUnder inner': "#over-under-inner"
+        'off-canvas overlay': "#overlay-off-canvas"
+        'off-canvas overlay trigger': "#overlay-off-canvas-trigger"
+        'over-bottom': "#over-bottom"
+        'over-inside': "#over-inside"
+        'over-inside inner': "#over-inside-inner"
+        'over-outside': "#over-outside"
+        'over-outside inner': "#over-outside-inner"
+        'over-intersect': "#over-intersect"
+        'over-intersect inner': "#over-intersect-inner"
+        'over-cover': "#over-cover"
+        'over-cover inner': "#over-cover-inner"
+        'over-fixed': "#over-fixed"
+        'over-fixed inner': "#over-fixed-inner"
+        'over-under': "#over-under"
+        'over-under inner': "#over-under-inner"

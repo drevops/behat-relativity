@@ -62,16 +62,16 @@ Feature: Behat relative assertions work
   @javascript @phpserver
   Scenario: Assert that one component is over another component
     Given I am on the test page
-    Then I see overInside, overIntersect and overCover over overBottom
-    And I see overInside inner, overIntersect inner and overCover inner over overBottom
-    And I see overFixed and overFixed inner over overBottom
+    Then I see over-inside, over-intersect and over-cover over over-bottom
+    And I see over-inside inner, over-intersect inner and over-cover inner over over-bottom
+    And I see over-fixed and over-fixed inner over over-bottom
     And I save screenshot
 
   @javascript @phpserver
   Scenario: Assert that one component is not over another component
     Given I am on the test page
-    Then I see overOutside and overUnder not over overBottom
-    And I see overOutside inner and overUnder inner not over overBottom
+    Then I see over-outside and over-under not over over-bottom
+    And I see over-outside inner and over-under inner not over over-bottom
     And I save screenshot
 
   @javascript @phpserver
@@ -87,9 +87,9 @@ Feature: Behat relative assertions work
     And I save screenshot
 
   @javascript @phpserver
-  Scenario: Assert that offCanvas component is not visible
+  Scenario: Assert that off-canvas component is not visible
     Given I am on the test page
-    Then I don't see offCanvas left, offCanvas right, offCanvas top and offCanvas bottom
+    Then I don't see off-canvas left, off-canvas right, off-canvas top and off-canvas bottom
     And I save screenshot
 
   @javascript @phpserver
@@ -101,12 +101,12 @@ Feature: Behat relative assertions work
     And I save screenshot
 
   @javascript @phpserver
-  Scenario: Assert that offCanvas overlay is clickable when visible
+  Scenario: Assert that off-canvas overlay is clickable when visible
     Given I am viewing the site on a mobile device
     And I am on the test page
-    And I don't see offCanvas overlay
-    When I click on offCanvas overlay trigger
-    Then I see visible offCanvas overlay
+    And I don't see off-canvas overlay
+    When I click on off-canvas overlay trigger
+    Then I see visible off-canvas overlay
     And I save screenshot
 
   @javascript @phpserver

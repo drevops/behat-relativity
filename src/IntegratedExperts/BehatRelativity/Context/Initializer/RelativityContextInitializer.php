@@ -4,11 +4,11 @@
  * This file is a part of the IntegratesExperts\BehatRelativity package.
  */
 
-namespace IntegratedExperts\Behat\Relativity\Context\Initializer;
+namespace IntegratedExperts\BehatRelativity\Context\Initializer;
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\Initializer\ContextInitializer;
-use IntegratedExperts\Behat\Relativity\Context\RelativityContextInterface;
+use IntegratedExperts\BehatRelativity\Context\RelativityAwareContext;
 
 /**
  * Class RelativityContextInitializer.
@@ -72,7 +72,7 @@ class RelativityContextInitializer implements ContextInitializer
      */
     public function initializeContext(Context $context)
     {
-        if ($context instanceof RelativityContextInterface) {
+        if ($context instanceof RelativityAwareContext) {
             $context->setParameters($this->components, $this->offset, $this->breakpoints, $this->jqueryVersion);
         }
     }
