@@ -4,7 +4,7 @@
  * Behat context interface to enable Relativity.
  */
 
-namespace IntegratedExperts\BehatRelativity\Context;
+namespace IntegratedExperts\BehatRelativityExtension\Context;
 
 use Behat\Behat\Context\Context;
 

@@ -30,7 +30,7 @@
   },
   "autoload": {
     "psr-0": {
-      "IntegratedExperts\\BehatRelativity": "src/"
+      "IntegratedExperts\\BehatRelativityExtension": "src/"
     }
   },
   "scripts": {

@@ -45,11 +45,11 @@ default:
   suites:
     default:
       contexts:
-        - IntegratedExperts\Behat\Relativity\Context\RelativityContext
+        - IntegratedExperts\BehatRelativityExtension\Context\RelativityContext
         - FeatureContext
     
   extensions:
-    IntegratedExperts\Behat\Relativity\RelativityExtension:
+    IntegratedExperts\BehatRelativityExtension:
       breakpoints:
         mobile:
           width: 320

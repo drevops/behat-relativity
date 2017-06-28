@@ -4,7 +4,7 @@
  * Behat relativity extension.
  */
 
-namespace IntegratedExperts\BehatRelativity;
+namespace IntegratedExperts\BehatRelativityExtension\ServiceContainer;
 
 use Behat\Behat\Context\ServiceContainer\ContextExtension;
 use Behat\Testwork\ServiceContainer\Extension as ExtensionInterface;
@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\Definition;
 /**
  * Class RelativityExtension.
  */
-class RelativityExtension implements ExtensionInterface
+class BehatRelativityExtension implements ExtensionInterface
 {
 
     /**
@@ -92,16 +92,22 @@ class RelativityExtension implements ExtensionInterface
      */
     public function load(ContainerBuilder $container, array $config)
     {
-        $definition = new Definition('IntegratedExperts\BehatRelativity\Context\Initializer\RelativityContextInitializer',
+        $definition = new Definition(
+            'IntegratedExperts\BehatRelativityExtension\Context\Initializer\RelativityContextInitializer',
             [
                 $config['components'],
                 $config['offset'],
                 $config['breakpoints'],
                 $config['jquery_version'],
-            ]);
-        $definition->addTag(ContextExtension::INITIALIZER_TAG,
-            ['priority' => 0]);
-        $container->setDefinition('integratedexperts_relativity.relativity_context_initializer',
-            $definition);
+            ]
+        );
+        $definition->addTag(
+            ContextExtension::INITIALIZER_TAG,
+            ['priority' => 0]
+        );
+        $container->setDefinition(
+            'integratedexperts_relativity.relativity_context_initializer',
+            $definition
+        );
     }
 }

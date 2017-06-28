@@ -4,11 +4,11 @@
  * This file is a part of the IntegratesExperts\BehatRelativity package.
  */
 
-namespace IntegratedExperts\BehatRelativity\Context\Initializer;
+namespace IntegratedExperts\BehatRelativityExtension\Context\Initializer;
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\Initializer\ContextInitializer;
-use IntegratedExperts\BehatRelativity\Context\RelativityAwareContext;
+use IntegratedExperts\BehatRelativityExtension\Context\RelativityAwareContext;
 
 /**
  * Class RelativityContextInitializer.
