@@ -5,7 +5,7 @@
  * Relative components assertions.
  */
 
-namespace IntegratedExperts\BehatRelativity;
+namespace IntegratedExperts\BehatRelativityExtension\Context;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
@@ -13,16 +13,13 @@ use Behat\MinkExtension\Context\RawMinkContext;
 use Symfony\Component\Yaml\Exception\RuntimeException;
 
 /**
- * Class RelativeTrait.
+ * Class RelativityContext.
  */
-class RelativityContext extends RawMinkContext
+class RelativityContext extends RawMinkContext implements RelativityAwareContext
 {
 
     /**
      * Array of relative components.
-     *
-     * Array keys are component names and values are CSS selectors.
-     * This values must be passed via constructor from the calling class.
      *
      * @var array
      */
@@ -30,8 +27,6 @@ class RelativityContext extends RawMinkContext
 
     /**
      * Vertical offset.
-     *
-     * Used to offset vertical position when retrieving component dimensions.
      *
      * @var int
      */
@@ -47,32 +42,40 @@ class RelativityContext extends RawMinkContext
     /**
      * jQuery version.
      *
-     * If set to false, jQuery will not be injected.
-     *
      * @var string
      */
     protected $jqueryVersion;
 
     /**
-     * Constructor.
-     *
-     * @param array $parameters Settings for constructor.
+     * {@inheritdoc}
      */
-    public function __construct($parameters = [])
+    public function setComponents($components)
     {
-        // @todo: Add validation to make sure that only correctly formatted component values are provided.
-        $this->components = isset($parameters['components']) ? $parameters['components'] : ['page' => "#page"];
-        // @todo: Add validation to make sure that only correctly formatted offset value is provided.
-        $this->offset = isset($parameters['offset']) ? $parameters['offset'] : 0;
-        // @todo: Add validation to make sure that only correctly formatted breakpoint values are provided.
-        $this->breakpoints = isset($parameters['breakpoints']) ? $parameters['breakpoints'] : [
-            'desktop' => [
-                'width' => 992,
-                'height' => 1024,
-                'default' => true,
-            ],
-        ];
-        $this->jqueryVersion = isset($parameters['jquery_version']) ? $parameters['jquery_version'] : '2.2.4';
+        $this->components = $components;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setOffset($offset)
+    {
+        $this->offset = $offset;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setBreakpoints($breakpoints)
+    {
+        $this->breakpoints = $breakpoints;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setJqueryVersion($version)
+    {
+        $this->jqueryVersion = $version;
     }
 
     /**
@@ -145,11 +148,7 @@ class RelativityContext extends RawMinkContext
         $errors = [];
         foreach ($subjects as $subject) {
             if (!$this->componentIsVisible($this->components[$subject])) {
-                $errors[] = sprintf(
-                    "Unable to click on invisible component '%s' (%s)",
-                    $subject,
-                    $this->components[$subject]
-                );
+                $errors[] = sprintf("Unable to click on invisible component '%s' (%s)", $subject, $this->components[$subject]);
                 continue;
             }
 
@@ -159,12 +158,7 @@ class RelativityContext extends RawMinkContext
             try {
                 $this->getSession()->getDriver()->click($xpath);
             } catch (\Exception $e) {
-                $errors[] = sprintf(
-                    "Unable to click on component '%s' (%s): %s",
-                    $subject,
-                    $this->components[$subject],
-                    $e->getMessage()
-                );
+                $errors[] = sprintf("Unable to click on component '%s' (%s): %s", $subject, $this->components[$subject], $e->getMessage());
             }
         }
 

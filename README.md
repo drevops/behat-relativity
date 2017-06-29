@@ -45,32 +45,33 @@ default:
   suites:
     default:
       contexts:
-        - IntegratedExperts\BehatRelativity\RelativityContext:
-          -
-            # Supported screen breakpoints.
-            breakpoints:
-              mobile:
-                width: 320
-                height: 480
-              tablet:
-                width: 768
-                height: 1024
-              desktop:
-                width: 992
-                height: 1024
-                default: true
-              desktop_large:
-                width: 1200
-                height: 900
-            # Vertical offset.
-            offset: 60
-            # List of site-wide components.
-            components:
-              'page': "#page"
-              'main': "#main"
-              'top': "#top"
-              'bottom': "#bottom"
+        - IntegratedExperts\BehatRelativityExtension\Context\RelativityContext
         - FeatureContext
+    
+  extensions:
+    IntegratedExperts\BehatRelativityExtension:
+      breakpoints:
+        mobile:
+          width: 320
+          height: 480
+        tablet:
+          width: 768
+          height: 1024
+        desktop:
+          width: 992
+          height: 1024
+          default: true
+        desktop_large:
+          width: 1200
+          height: 900
+      # Vertical offset.
+      offset: 60
+      # List of site-wide components.
+      components:
+        'page': "#page"
+        'main': "#main"
+        'top': "#top"
+        'bottom': "#bottom"
 ```
 
 ## Local development
