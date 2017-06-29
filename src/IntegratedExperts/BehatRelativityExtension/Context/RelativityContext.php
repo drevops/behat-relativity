@@ -13,7 +13,7 @@ use Behat\MinkExtension\Context\RawMinkContext;
 use Symfony\Component\Yaml\Exception\RuntimeException;
 
 /**
- * Class RelativeTrait.
+ * Class RelativityContext.
  */
 class RelativityContext extends RawMinkContext implements RelativityAwareContext
 {
@@ -21,16 +21,12 @@ class RelativityContext extends RawMinkContext implements RelativityAwareContext
     /**
      * Array of relative components.
      *
-     * Array keys are component names and values are CSS selectors.
-     *
      * @var array
      */
     protected $components;
 
     /**
      * Vertical offset.
-     *
-     * Used to offset vertical position when retrieving component dimensions.
      *
      * @var int
      */
@@ -46,8 +42,6 @@ class RelativityContext extends RawMinkContext implements RelativityAwareContext
     /**
      * jQuery version.
      *
-     * If set to false, jQuery will not be injected.
-     *
      * @var string
      */
     protected $jqueryVersion;
@@ -55,12 +49,33 @@ class RelativityContext extends RawMinkContext implements RelativityAwareContext
     /**
      * {@inheritdoc}
      */
-    public function setParameters($components, $offset, $breakpoints, $jqueryVersion)
+    public function setComponents($components)
     {
         $this->components = $components;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setOffset($offset)
+    {
         $this->offset = $offset;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setBreakpoints($breakpoints)
+    {
         $this->breakpoints = $breakpoints;
-        $this->jqueryVersion = $jqueryVersion;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setJqueryVersion($version)
+    {
+        $this->jqueryVersion = $version;
     }
 
     /**
@@ -133,11 +148,7 @@ class RelativityContext extends RawMinkContext implements RelativityAwareContext
         $errors = [];
         foreach ($subjects as $subject) {
             if (!$this->componentIsVisible($this->components[$subject])) {
-                $errors[] = sprintf(
-                    "Unable to click on invisible component '%s' (%s)",
-                    $subject,
-                    $this->components[$subject]
-                );
+                $errors[] = sprintf("Unable to click on invisible component '%s' (%s)", $subject, $this->components[$subject]);
                 continue;
             }
 
@@ -147,12 +158,7 @@ class RelativityContext extends RawMinkContext implements RelativityAwareContext
             try {
                 $this->getSession()->getDriver()->click($xpath);
             } catch (\Exception $e) {
-                $errors[] = sprintf(
-                    "Unable to click on component '%s' (%s): %s",
-                    $subject,
-                    $this->components[$subject],
-                    $e->getMessage()
-                );
+                $errors[] = sprintf("Unable to click on component '%s' (%s): %s", $subject, $this->components[$subject], $e->getMessage());
             }
         }
 

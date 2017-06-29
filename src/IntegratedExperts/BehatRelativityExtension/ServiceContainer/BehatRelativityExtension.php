@@ -51,6 +51,7 @@ class BehatRelativityExtension implements ExtensionInterface
      */
     public function configure(ArrayNodeDefinition $builder)
     {
+        // @codingStandardsIgnoreStart
         $builder->children()
             ->arrayNode('components')
                 ->normalizeKeys(false)
@@ -85,6 +86,7 @@ class BehatRelativityExtension implements ExtensionInterface
             ->scalarNode('jquery_version')
                 ->defaultValue('1.12.4')
             ->end();
+        // @codingStandardsIgnoreEnd
     }
 
     /**
@@ -92,22 +94,13 @@ class BehatRelativityExtension implements ExtensionInterface
      */
     public function load(ContainerBuilder $container, array $config)
     {
-        $definition = new Definition(
-            'IntegratedExperts\BehatRelativityExtension\Context\Initializer\RelativityContextInitializer',
-            [
-                $config['components'],
-                $config['offset'],
-                $config['breakpoints'],
-                $config['jquery_version'],
-            ]
-        );
-        $definition->addTag(
-            ContextExtension::INITIALIZER_TAG,
-            ['priority' => 0]
-        );
-        $container->setDefinition(
-            'integratedexperts_relativity.relativity_context_initializer',
-            $definition
-        );
+        $definition = new Definition('IntegratedExperts\BehatRelativityExtension\Context\Initializer\RelativityContextInitializer', [
+            $config['components'],
+            $config['offset'],
+            $config['breakpoints'],
+            $config['jquery_version'],
+        ]);
+        $definition->addTag(ContextExtension::INITIALIZER_TAG, ['priority' => 0]);
+        $container->setDefinition('integratedexperts_relativity.relativity_context_initializer', $definition);
     }
 }

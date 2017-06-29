@@ -15,10 +15,9 @@ use IntegratedExperts\BehatRelativityExtension\Context\RelativityAwareContext;
  */
 class RelativityContextInitializer implements ContextInitializer
 {
+
     /**
      * Array of relative components.
-     *
-     * Array keys are component names and values are CSS selectors.
      *
      * @var array
      */
@@ -26,8 +25,6 @@ class RelativityContextInitializer implements ContextInitializer
 
     /**
      * Vertical offset.
-     *
-     * Used to offset vertical position when retrieving component dimensions.
      *
      * @var int
      */
@@ -42,8 +39,6 @@ class RelativityContextInitializer implements ContextInitializer
 
     /**
      * jQuery version.
-     *
-     * If set to false, jQuery will not be injected.
      *
      * @var string
      */
@@ -72,8 +67,13 @@ class RelativityContextInitializer implements ContextInitializer
      */
     public function initializeContext(Context $context)
     {
-        if ($context instanceof RelativityAwareContext) {
-            $context->setParameters($this->components, $this->offset, $this->breakpoints, $this->jqueryVersion);
+        if (!$context instanceof RelativityAwareContext) {
+            return;
         }
+
+        $context->setComponents($this->components);
+        $context->setBreakpoints($this->breakpoints);
+        $context->setOffset($this->offset);
+        $context->setJqueryVersion($this->jqueryVersion);
     }
 }
