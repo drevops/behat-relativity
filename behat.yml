@@ -7,7 +7,7 @@ default:
         - IntegratedExperts\BehatPhpServer\PhpServerContext:
           -
             docroot: %paths.base%/tests/behat/features/fixtures
-        - IntegratedExperts\Behat\Screenshot\Context\ScreenshotContext
+        - IntegratedExperts\BehatScreenshotExtension\Context\ScreenshotContext
         - IntegratedExperts\BehatRelativityExtension\Context\RelativityContext
         - FeatureContext
 
@@ -22,7 +22,7 @@ default:
         wd_host: "http://localhost:4444/wd/hub"
         capabilities: { "browser": "chrome", "version": "*" }
       javascript_session: selenium2
-    IntegratedExperts\Behat\Screenshot\ScreenshotExtension:
+    IntegratedExperts\BehatScreenshotExtension:
       dir: %paths.base%/screenshots
       fail: true
       purge: false
