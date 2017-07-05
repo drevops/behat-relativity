@@ -172,7 +172,7 @@ class RelativityContext extends RawMinkContext implements RelativityAwareContext
      *
      * @param \Behat\Behat\Hook\Scope\BeforeScenarioScope $scope Scenario scope.
      *
-     * @BeforeScenario
+     * @BeforeScenario @javascript
      */
     public function init(BeforeScenarioScope $scope)
     {
