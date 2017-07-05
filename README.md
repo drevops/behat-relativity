@@ -64,7 +64,8 @@ default:
         desktop_large:
           width: 1200
           height: 900
-      # Vertical offset.
+      # Vertical offset - document will be scrolled to the element with this offset.
+      # Useful when fixed elements may cover part of pages making it impossible to click on components.
       offset: 60
       # List of site-wide components.
       components:
