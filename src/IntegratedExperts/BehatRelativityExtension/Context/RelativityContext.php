@@ -197,7 +197,7 @@ class RelativityContext extends RawMinkContext implements RelativityAwareContext
      * @param string $subject Subject as a string.
      * @param string $others  Others as a string.
      *
-     * @Then /^I see ([a-zA-Z0-9\s,]+) above ([a-zA-Z0-9\s,\-]+)$/
+     * @Then /^I see ([a-zA-Z0-9\s,\-]+) above ([a-zA-Z0-9\s,\-]+)$/
      */
     public function assertAbove($subject, $others)
     {
@@ -210,7 +210,7 @@ class RelativityContext extends RawMinkContext implements RelativityAwareContext
      * @param string $subject Subject as a string.
      * @param string $others  Others as a string.
      *
-     * @Then /^I see ([a-zA-Z0-9\s,]+) below ([a-zA-Z0-9\s,\-]+)$/
+     * @Then /^I see ([a-zA-Z0-9\s,\-]+) below ([a-zA-Z0-9\s,\-]+)$/
      */
     public function assertBelow($subject, $others)
     {
@@ -223,7 +223,7 @@ class RelativityContext extends RawMinkContext implements RelativityAwareContext
      * @param string $subject Subject as a string.
      * @param string $others  Others as a string.
      *
-     * @Then /^I see ([a-zA-Z0-9\s,]+) to (?:|the\s)left of ([a-zA-Z0-9\s,]+)$/
+     * @Then /^I see ([a-zA-Z0-9\s,\-]+) to (?:|the\s)left of ([a-zA-Z0-9\s,]+)$/
      */
     public function assertLeft($subject, $others)
     {
@@ -236,7 +236,7 @@ class RelativityContext extends RawMinkContext implements RelativityAwareContext
      * @param string $subject Subject as a string.
      * @param string $others  Others as a string.
      *
-     * @Then /^I see ([a-zA-Z0-9\s,]+) to (?:|the\s)right of ([a-zA-Z0-9\s,]+)$/
+     * @Then /^I see ([a-zA-Z0-9\s,\-]+) to (?:|the\s)right of ([a-zA-Z0-9\s,\-]+)$/
      */
     public function assertRight($subject, $others)
     {
@@ -249,7 +249,7 @@ class RelativityContext extends RawMinkContext implements RelativityAwareContext
      * @param string $subject Subject as a string.
      * @param string $others  Others as a string.
      *
-     * @Then /^I see ([a-zA-Z0-9\s,]+) inside of ([a-zA-Z0-9\s,]+)$/
+     * @Then /^I see ([a-zA-Z0-9\s,\-]+) inside of ([a-zA-Z0-9\s,\-]+)$/
      */
     public function assertInside($subject, $others)
     {
@@ -262,7 +262,7 @@ class RelativityContext extends RawMinkContext implements RelativityAwareContext
      * @param string $subject Subject as a string.
      * @param string $others  Others as a string.
      *
-     * @Then /^I see ([a-zA-Z0-9\s,]+) outside of ([a-zA-Z0-9\s,]+)$/
+     * @Then /^I see ([a-zA-Z0-9\s,\-]+) outside of ([a-zA-Z0-9\s,\-]+)$/
      */
     public function assertOutside($subject, $others)
     {
