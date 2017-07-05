@@ -145,3 +145,28 @@ Feature: Behat relative assertions work
     Given I am on the test page
     Then I see top, main and left above bottom
     And I save screenshot
+
+  @javascript @phpserver
+  Scenario: Assert that elements with fixed position work correctly
+    Given I am on the test page
+    # Assert that first level fixed container works as expected relatively to
+    # other static elements on the page.
+    Then I see fixed-scrolled below top
+    And I save screenshot
+    And I see fixed-scrolled above bottom
+    And I save screenshot
+    And I see top above fixed-scrolled
+    And I save screenshot
+    And I see bottom below fixed-scrolled
+    And I save screenshot
+    # Assert that static and fixed children and grand-children of first level
+    # fixed container work as expected relatively to other static elements on
+    # the page.
+    And I see fixed-scrolled-item-1, fixed-scrolled-item-2, fixed-scrolled-item-3, fixed-scrolled-item-31, fixed-scrolled-item-311, fixed-scrolled-item-312, fixed-scrolled-item-32 below top
+    And I save screenshot
+    And I see fixed-scrolled-item-1, fixed-scrolled-item-2, fixed-scrolled-item-3, fixed-scrolled-item-31, fixed-scrolled-item-311, fixed-scrolled-item-312, fixed-scrolled-item-32 above bottom
+    And I save screenshot
+    # Assert that static elements within fixed container work correctly with
+    # grand-children within previous sibling fixed container.
+    And I see fixed-scrolled-item-311 above fixed-scrolled-item-32
+    And I save screenshot

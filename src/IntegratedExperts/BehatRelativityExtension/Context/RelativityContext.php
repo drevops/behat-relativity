@@ -606,14 +606,35 @@ class RelativityContext extends RawMinkContext implements RelativityAwareContext
      */
     protected function getComponentGeometry($selector, $doScroll = true)
     {
-        $script = "return (function(el) { 
-            if (el.length) {".($doScroll ? "jQuery(window).scrollTop(el.offset().top);" : "")."
+        $script = "return (function(el) {
+            function scrollToEl(el) {
+              el.parents().each(function () {
+                var parent = $(this);
+                parent.scrollTop(0);
+                var delta = el.offset().top - parent.offset().top;
+                parent.scrollTop(delta);
+              });
+            }
+            
+            function findTop(el) {
+              var top = el.offset().top;
+              el.parents().each(function () {
+                var parent = jQuery(this);
+                if (parent.css('position') === 'fixed') {
+                  top = top - parent.parent().scrollTop();
+                  el = parent;
+                }
+              });
+              return top;
+            }
+        
+            if (el.length) {".($doScroll ? "scrollToEl(el);" : "")."
               function zIndex(el) { var z = 0; el.add(el.parents()).each(function () { if ((jQuery(this).css('position') == 'absolute') && jQuery(this).css('z-index') != 'auto') { z = parseInt(jQuery(this).css('z-index'), 10); } }); return z; }                    
               if (el.is(':visible') && el.height() > 1 && !(el.css('clip') == 'rect(0px 0px 0px 0px)' && el.css('position') == 'absolute')){       
                 return {
                   width: el.outerWidth(),
                   height: el.outerHeight(),
-                  top: Math.ceil(el.offset().top),  
+                  top: Math.ceil(findTop(el)),  
                   left: Math.ceil(el.offset().left),
                   zIndex: zIndex(el),
                   position: el.css('position')

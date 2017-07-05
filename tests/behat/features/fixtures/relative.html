@@ -1,429 +1,586 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title></title>
+  <meta charset="UTF-8">
+  <title></title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <style>
+    body {
+      position: relative;
+      margin: 0;
+    }
 
-    <style>
-        body {
-            position: relative;
-            margin: 0;
+    #top {
+      clear: both;
+      background: yellow;
+    }
+
+    #top-inner {
+      background: orange;
+      margin: 20px;
+    }
+
+    #main {
+      background: gray;
+      display: inline-block;
+      width: 50%;
+    }
+
+    #main-inner {
+      background: darkgray;
+      margin: 20px;
+    }
+
+    #main-inner-custom {
+      background: orange;
+      margin: 20px;
+    }
+
+    #left {
+      float: left;
+      background: blue;
+      width: 25%;
+    }
+
+    #left-inner {
+      background: darkblue;
+      margin: 20px;
+    }
+
+    #right {
+      float: right;
+      background: green;
+      width: 25%;
+    }
+
+    #right-inner {
+      background: darkgreen;
+      margin: 20px;
+    }
+
+    #bottom {
+      clear: both;
+      background: red;
+    }
+
+    #bottom-inner {
+      clear: both;
+      background: darkred;
+      margin: 20px;
+    }
+
+    #off-canvas-left {
+      position: fixed;
+      width: 200px;
+      height: 100%;
+      left: -200px;
+      top: 0;
+      background: #00a9ec;
+    }
+
+    #off-canvas-right {
+      position: fixed;
+      width: 200px;
+      height: 100%;
+      right: -200px;
+      top: 0;
+      background: #1b405b;
+    }
+
+    #off-canvas-top {
+      position: fixed;
+      width: 100%;
+      height: 200px;
+      left: 0;
+      top: -200px;
+      background: #00a9ec;
+    }
+
+    #off-canvas-bottom {
+      position: fixed;
+      width: 100%;
+      height: 200px;
+      left: 0;
+      bottom: -200px;
+      background: #1b405b;
+    }
+
+    #top-inner,
+    #bottom-inner,
+    #left-inner,
+    #right-inner,
+    #main-inner,
+    #main-inner-custom {
+      padding: 20px 100px;
+      color: white;
+      overflow: hidden;
+    }
+
+    @media (max-width: 600px) {
+      #main,
+      #top,
+      #bottom,
+      #left,
+      #right {
+        float: none;
+        width: 100%;
+      }
+    }
+
+    #hidden {
+      display: none;
+    }
+
+    #sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+
+    #sr-only-shown {
+      position: static;
+      width: auto;
+      height: auto;
+      margin: 0;
+      overflow: visible;
+      clip: auto;
+    }
+
+    #overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.25;
+      z-index: 9998;
+      background-color: rgb(51, 51, 51);
+      display: none;
+    }
+
+    #overlay.overlay-visible {
+      display: block;
+    }
+
+    #overlay-off-canvas {
+      position: absolute;
+      top: 0;
+      left: -300px;
+      width: 100%;
+      height: 100%;
+      opacity: 0.25;
+      z-index: 9998;
+      background-color: rgb(51, 51, 51);
+      display: none;
+    }
+
+    #overlay-off-canvas.overlay-visible {
+      display: block;
+    }
+
+    #over-container {
+      position: relative;
+      border: solid 1px black;
+    }
+
+    #over-bottom {
+      display: block;
+      width: 300px;
+      padding: 100px;
+      background: rgba(128, 192, 128, 0.2);
+      margin: 100px auto;
+    }
+
+    #over-inside,
+    #over-outside,
+    #over-intersect,
+    #over-cover,
+    #over-under {
+      position: absolute;
+    }
+
+    #over-inside,
+    #over-inside-inner,
+    #over-outside,
+    #over-outside-inner,
+    #over-intersect,
+    #over-cover,
+    #over-cover-inner,
+    #over-under,
+    #over-under-inner {
+      padding: 10px;
+      max-width: 100px;
+    }
+
+    #over-cover {
+      width: 550px;
+      padding: 100px;
+      margin: 75px auto 75px -375px;
+      background: rgba(192, 192, 192, 0.6);
+      top: 0;
+      left: 50%;
+      max-width: none;
+    }
+
+    #over-cover-inner {
+      background: lightblue;
+    }
+
+    #over-inside {
+      background: red;
+      top: 150px;
+      left: 50%;
+    }
+
+    #over-inside-inner {
+      background: orange;
+    }
+
+    #over-outside {
+      background: blue;
+      top: 0;
+      left: 0;
+    }
+
+    #over-outside-inner {
+      background: lightblue;
+    }
+
+    #over-intersect {
+      background: green;
+      top: 50px;
+      left: 60%;
+    }
+
+    #over-intersect-inner {
+      background: lightgreen;
+    }
+
+    #over-fixed {
+      position: fixed;
+      padding: 10px;
+      max-width: 100px;
+      background: lime;
+
+      top: 60%;
+      left: 30%;
+    }
+
+    #over-fixed-inner {
+      background: limegreen;
+    }
+
+    #over-under {
+      padding: 10px;
+      max-width: 100px;
+
+      background: brown;
+      top: 40%;
+      left: 40%;
+      z-index: -1;
+    }
+
+    #over-under-inner {
+      background: lightpink;
+    }
+
+    #fixed-scrolled {
+      position: fixed;
+      padding: 10px;
+      width: 100px;
+      height: 100px;
+      background: orange;
+      overflow: scroll;
+
+      top: 130px;
+      left: 10%;
+    }
+
+    #fixed-scrolled-item-1,
+    #fixed-scrolled-item-2,
+    #fixed-scrolled-item-3,
+    #fixed-scrolled-item-31,
+    #fixed-scrolled-item-32,
+    #fixed-scrolled-item-311,
+    #fixed-scrolled-item-312 {
+      background: purple;
+      display: block;
+      padding: 10px;
+      border-bottom: solid 1px black;
+    }
+
+    #fixed-scrolled-item-31 {
+      background: blue;
+      overflow: scroll;
+      height: 50px;
+    }
+
+    #fixed-scrolled-item-311 {
+      background: grey;
+    }
+
+    #fixed-scrolled-item-312 {
+      background: lightgrey;
+    }
+
+    #fixed-scrolled-item-32 {
+      background: navy;
+    }
+
+    #viewport-custom {
+      padding: 10px;
+      background: orange;
+      display: none;
+      left: 50px;
+      top: 100px;
+    }
+
+    @media (min-width: 922px) {
+      #viewport-custom {
+        display: block;
+      }
+    }
+  </style>
+
+  <script>
+    // Test helpers.
+    (function ($) {
+      $(document).ready(function () {
+        var $container = $('<div class="test-container"></div>').appendTo('body');
+        $container.css({
+          position: 'fixed',
+          right: 0,
+          top: '50%',
+          width: '100px',
+          background: 'gray',
+          padding: '10px'
+        });
+        var $s11 = $('<button id="scroll311">Scroll to 311</button>').appendTo($container);
+        var $s12 = $('<button id="scroll312">Scroll to 312</button>').appendTo($container);
+        var $sb = $('<button id="scrollbottom">Scroll to #bottom</button>').appendTo($container);
+        var $t11 = $('<button id="top311">Top 311</button>').appendTo($container);
+        var $t12 = $('<button id="top312">Top 312</button>').appendTo($container);
+        var $tb = $('<button id="topbottom">Top of #bottom</button>').appendTo($container);
+        var $test = $('<button id="test">Run tests</button>').appendTo($container);
+        var $result = $('<span id="result"></span>').appendTo($container);
+
+        function scrollToEl($el) {
+          $el.parents().each(function () {
+            var $parent = $(this);
+            $parent.scrollTop(0);
+            var delta = $el.offset().top - $parent.offset().top;
+            $parent.scrollTop(delta);
+          });
         }
 
-        #top {
-            clear: both;
-            background: yellow;
-        }
-
-        #top-inner {
-            background: orange;
-            margin: 20px;
-        }
-
-        #main {
-            background: gray;
-            display: inline-block;
-            width: 50%;
-        }
-
-        #main-inner {
-            background: darkgray;
-            margin: 20px;
-        }
-
-        #main-inner-custom {
-            background: orange;
-            margin: 20px;
-        }
-
-        #left {
-            float: left;
-            background: blue;
-            width: 25%;
-        }
-
-        #left-inner {
-            background: darkblue;
-            margin: 20px;
-        }
-
-        #right {
-            float: right;
-            background: green;
-            width: 25%;
-        }
-
-        #right-inner {
-            background: darkgreen;
-            margin: 20px;
-        }
-
-        #bottom {
-            clear: both;
-            background: red;
-        }
-
-        #bottom-inner {
-            clear: both;
-            background: darkred;
-            margin: 20px;
-        }
-
-        #off-canvas-left {
-            position: fixed;
-            width: 200px;
-            height: 100%;
-            left: -200px;
-            top: 0;
-            background: #00a9ec;
-        }
-
-        #off-canvas-right {
-            position: fixed;
-            width: 200px;
-            height: 100%;
-            right: -200px;
-            top: 0;
-            background: #1b405b;
-        }
-
-        #off-canvas-top {
-            position: fixed;
-            width: 100%;
-            height: 200px;
-            left: 0;
-            top: -200px;
-            background: #00a9ec;
-        }
-
-        #off-canvas-bottom {
-            position: fixed;
-            width: 100%;
-            height: 200px;
-            left: 0;
-            bottom: -200px;
-            background: #1b405b;
-        }
-
-        #top-inner,
-        #bottom-inner,
-        #left-inner,
-        #right-inner,
-        #main-inner,
-        #main-inner-custom {
-            padding: 20px 100px;
-            color: white;
-            overflow: hidden;
-        }
-
-        @media (max-width: 600px) {
-            #main,
-            #top,
-            #bottom,
-            #left,
-            #right {
-                float: none;
-                width: 100%;
+        function findTop($el) {
+          var top = $el.offset().top;
+          $el.parents().each(function () {
+            var $parent = $(this);
+            if ($parent.css('position') === 'fixed') {
+              top = top - $parent.parent().scrollTop();
+              $el = $parent;
             }
+          });
+          return top;
         }
 
-        #hidden {
-            display: none;
-        }
+        $s11.click(function () {
+          var $el = $('#fixed-scrolled-item-32');
+          scrollToEl($el);
+        });
 
-        #sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            margin: -1px;
-            padding: 0;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            border: 0;
-        }
+        $s12.click(function () {
+          var $el = $('#fixed-scrolled-item-312');
+          scrollToEl($el);
+        });
 
-        #sr-only-shown {
-            position: static;
-            width: auto;
-            height: auto;
-            margin: 0;
-            overflow: visible;
-            clip: auto;
-        }
+        $sb.click(function () {
+          var $el = $('#bottom');
+          scrollToEl($el);
+        });
 
-        #overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.25;
-            z-index: 9998;
-            background-color: rgb(51, 51, 51);
-            display: none;
-        }
+        $t11.click(function () {
+          $result.text(findTop($('#fixed-scrolled-item-32')));
+        });
 
-        #overlay.overlay-visible {
-            display: block;
-        }
+        $t12.click(function () {
+          $result.text(findTop($('#fixed-scrolled-item-312')));
+        });
 
-        #overlay-off-canvas {
-            position: absolute;
-            top: 0;
-            left: -300px;
-            width: 100%;
-            height: 100%;
-            opacity: 0.25;
-            z-index: 9998;
-            background-color: rgb(51, 51, 51);
-            display: none;
-        }
+        $tb.click(function () {
+          $result.text(findTop($('#bottom')));
+        });
 
-        #overlay-off-canvas.overlay-visible {
-            display: block;
-        }
+        $test.click(function () {
+          var result = true;
+          // Value taken from CSS of the fixed element.
+          var fixedOffset = 130;
 
-        #over-container {
-            position: relative;
-            border: solid 1px black;
-        }
+          scrollToEl($('#fixed-scrolled-item-311'));
+          result &= findTop($('#fixed-scrolled-item-311')) === fixedOffset;
 
-        #over-bottom {
-            display: block;
-            width: 300px;
-            padding: 100px;
-            background: rgba(128, 192, 128, 0.2);
-            margin: 100px auto;
-        }
+          scrollToEl($('#fixed-scrolled-item-312'));
+          result &= findTop($('#fixed-scrolled-item-312')) === fixedOffset;
 
-        #over-inside,
-        #over-outside,
-        #over-intersect,
-        #over-cover,
-        #over-under {
-            position: absolute;
-        }
+          scrollToEl($('#bottom'));
+          result &= findTop($('#bottom')) === $('#bottom').offset().top;
 
-        #over-inside,
-        #over-inside-inner,
-        #over-outside,
-        #over-outside-inner,
-        #over-intersect,
-        #over-cover,
-        #over-cover-inner,
-        #over-under,
-        #over-under-inner {
-            padding: 10px;
-            max-width: 100px;
-        }
-
-        #over-cover {
-            width: 550px;
-            padding: 100px;
-            margin: 75px auto 75px -375px;
-            background: rgba(192, 192, 192, 0.6);
-            top: 0;
-            left: 50%;
-            max-width: none;
-        }
-
-        #over-cover-inner {
-            background: lightblue;
-        }
-
-        #over-inside {
-            background: red;
-            top: 150px;
-            left: 50%;
-        }
-
-        #over-inside-inner {
-            background: orange;
-        }
-
-        #over-outside {
-            background: blue;
-            top: 0;
-            left: 0;
-        }
-
-        #over-outside-inner {
-            background: lightblue;
-        }
-
-        #over-intersect {
-            background: green;
-            top: 50px;
-            left: 60%;
-        }
-
-        #over-intersect-inner {
-            background: lightgreen;
-        }
-
-        #over-fixed {
-            position: fixed;
-            padding: 10px;
-            max-width: 100px;
-            background: lime;
-
-            top: 60%;
-            left: 30%;
-        }
-
-        #over-fixed-inner {
-            background: limegreen;
-        }
-
-        #over-under {
-            padding: 10px;
-            max-width: 100px;
-
-            background: brown;
-            top: 40%;
-            left: 40%;
-            z-index: -1;
-        }
-
-        #over-under-inner {
-            background: lightpink;
-        }
-
-        #viewport-custom {
-            padding: 10px;
-            background: orange;
-            display: none;
-            left: 50px;
-            top: 100px;
-        }
-
-        @media (min-width: 922px) {
-            #viewport-custom {
-                display: block;
-            }
-        }
-    </style>
+          $result.text(result ? 'PASS' : 'FAIL');
+        });
+      });
+    }(jQuery));
+  </script>
 </head>
 <body>
 <div id="top">
-    Top content
-    <div id="top-inner">
-        inner Top content
-    </div>
+  Top content
+  <div id="top-inner">
+    inner Top content
+  </div>
 </div>
 
 <div id="main">
-    Main content
-    <div id="main-inner">
-        inner Main content
-        <div id="main-inner-custom">
-            inner Main content custom
-        </div>
+  Main content
+  <div id="main-inner">
+    inner Main content
+    <div id="main-inner-custom">
+      inner Main content custom
     </div>
+  </div>
 </div>
 <div id="left">
-    Left content
-    <div id="left-inner">
-        inner Left content
-    </div>
+  Left content
+  <div id="left-inner">
+    inner Left content
+  </div>
 </div>
 
 <div id="right">
-    Right content
-    <div id="right-inner">
-        inner Right content
-    </div>
+  Right content
+  <div id="right-inner">
+    inner Right content
+  </div>
 </div>
 
 <div id="bottom">
-    Bottom content
-    <div id="bottom-inner">
-        inner Bottom content
-    </div>
+  Bottom content
+  <div id="bottom-inner">
+    inner Bottom content
+  </div>
 </div>
 
 <div id="viewport-custom">Text for custom viewport</div>
 
 <div id="off-canvas-left">
-    Off-canvas left content
+  Off-canvas left content
 </div>
 
 <div id="off-canvas-right">
-    Off-canvas right content
+  Off-canvas right content
 </div>
 
 <div id="off-canvas-top">
-    Off-canvas top content
+  Off-canvas top content
 </div>
 
 <div id="off-canvas-bottom">
-    Off-canvas bottom content
+  Off-canvas bottom content
 </div>
 
 <div id="hidden">
-    Hidden content
+  Hidden content
 </div>
 
 <div id="sr-only">
-    Hidden content, but accessible for screen readers
+  Hidden content, but accessible for screen readers
 </div>
 
 <div id="sr-only-shown">
-    Hidden content that is accessible for screen readers, but shown after being hidden
+  Hidden content that is accessible for screen readers, but shown after being hidden
 </div>
 
 <button id="overlay-trigger" onclick="jQuery('#overlay').addClass('overlay-visible')">Show overlay</button>
 <div id="overlay"></div>
 
 <button id="overlay-off-canvas-trigger" onclick="jQuery('#overlay-off-canvas').addClass('overlay-visible')">Show
-    off-canvas overlay
+  off-canvas overlay
 </button>
 <div id="overlay-off-canvas"></div>
 
 <div id="over-container">
-    <div id="over-cover">
-        Text COVER over
-        <div id="over-cover-inner">
-            Text inner COVER over
-        </div>
+  <div id="over-cover">
+    Text COVER over
+    <div id="over-cover-inner">
+      Text inner COVER over
     </div>
+  </div>
 
-    <div id="over-inside">
-        Text INSIDE over
-        <div id="over-inside-inner">
-            Text inner INSIDE over
-        </div>
+  <div id="over-inside">
+    Text INSIDE over
+    <div id="over-inside-inner">
+      Text inner INSIDE over
     </div>
+  </div>
 
-    <div id="over-outside">
-        Text OUTSIDE over
-        <div id="over-outside-inner">
-            Text inner OUTSIDE over
-        </div>
+  <div id="over-outside">
+    Text OUTSIDE over
+    <div id="over-outside-inner">
+      Text inner OUTSIDE over
     </div>
+  </div>
 
-    <div id="over-intersect">
-        Text INTERSECT over
-        <div id="over-intersect-inner">
-            Text inner INTERSECT over
-        </div>
+  <div id="over-intersect">
+    Text INTERSECT over
+    <div id="over-intersect-inner">
+      Text inner INTERSECT over
     </div>
+  </div>
 
-    <div id="over-fixed">
-        Text FIXED over
-        <div id="over-fixed-inner">
-            Text inner FIXED over
-        </div>
+  <div id="over-fixed">
+    Text FIXED over
+    <div id="over-fixed-inner">
+      Text inner FIXED over
     </div>
+  </div>
 
-    <div id="over-under">
-        Text UNDER over
-        <div id="over-under-inner">
-            Text inner UNDER over
-        </div>
+  <div id="over-under">
+    Text UNDER over
+    <div id="over-under-inner">
+      Text inner UNDER over
     </div>
+  </div>
 
-    <div id="over-bottom">Text for over bottom</div>
+  <div id="over-bottom">Text for over bottom</div>
+</div>
+
+<div id="fixed-scrolled">
+  <div id="fixed-scrolled-item-1">
+    Item 1
+  </div>
+  <div id="fixed-scrolled-item-2">
+    Item 2
+  </div>
+  <div id="fixed-scrolled-item-3">
+    Item 3
+    <div id="fixed-scrolled-item-31">
+      Item 31
+      <div id="fixed-scrolled-item-311">
+        Item 311
+      </div>
+      <div id="fixed-scrolled-item-312">
+        Item 312
+      </div>
+    </div>
+    <div id="fixed-scrolled-item-32">
+      Item 32
+    </div>
+  </div>
 </div>
 
 </body>
