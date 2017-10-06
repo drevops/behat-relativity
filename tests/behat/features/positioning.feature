@@ -93,6 +93,15 @@ Feature: Behat relative assertions work
     And I save screenshot
 
   @javascript @phpserver
+  Scenario: Assert that element can be hovered
+    Given I am on the test page
+    And I see visible hover
+    And I don't see hover content
+    When I hover over hover
+    Then I see visible hover content
+    And I save screenshot
+
+  @javascript @phpserver
   Scenario: Assert that overlay is clickable when visible
     Given I am on the test page
     And I don't see overlay
