@@ -137,7 +137,7 @@ class RelativityContext extends RawMinkContext implements RelativityAwareContext
      *
      * @javascript
      */
-    public function assertClick($subjects)
+    public function iClickComponents($subjects)
     {
         $subjects = $this->parseComponents($subjects);
 
@@ -148,7 +148,7 @@ class RelativityContext extends RawMinkContext implements RelativityAwareContext
         $errors = [];
         foreach ($subjects as $subject) {
             if (!$this->componentIsVisible($this->components[$subject])) {
-                $errors[] = sprintf("Unable to click on invisible component '%s' (%s)", $subject, $this->components[$subject]);
+                $errors[] = sprintf("Unable to click on an invisible component '%s' (%s)", $subject, $this->components[$subject]);
                 continue;
             }
 
@@ -159,6 +159,45 @@ class RelativityContext extends RawMinkContext implements RelativityAwareContext
                 $this->getSession()->getDriver()->click($xpath);
             } catch (\Exception $e) {
                 $errors[] = sprintf("Unable to click on component '%s' (%s): %s", $subject, $this->components[$subject], $e->getMessage());
+            }
+        }
+
+        if (count($errors) > 0) {
+            throw new \Exception(implode("\n", $errors));
+        }
+    }
+
+    /**
+     * Hover the mouse over one or multiple elements.
+     *
+     * @param string $subjects Subjects as a string.
+     *
+     * @When /^(?:|I )hover (?:over?) ([a-zA-Z0-9\s,\-]+)$/
+     *
+     * @javascript
+     */
+    public function iHoverComponents($subjects)
+    {
+        $subjects = $this->parseComponents($subjects);
+
+        if (empty($subjects)) {
+            throw new \Exception('No components provided');
+        }
+
+        $errors = [];
+        foreach ($subjects as $subject) {
+            if (!$this->componentIsVisible($this->components[$subject])) {
+                $errors[] = sprintf("Unable to hover over an invisible component '%s' (%s)", $subject, $this->components[$subject]);
+                continue;
+            }
+
+            $session = $this->getSession();
+            $xpath = $session->getSelectorsHandler()->selectorToXpath('css', $this->components[$subject]);
+
+            try {
+                $this->getSession()->getDriver()->mouseOver($xpath);
+            } catch (\Exception $e) {
+                $errors[] = sprintf("Unable to hover over a component '%s' (%s): %s", $subject, $this->components[$subject], $e->getMessage());
             }
         }
 

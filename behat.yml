@@ -62,6 +62,8 @@ default:
         'off-canvas bottom': "#off-canvas-bottom"
         'sr only': "#sr-only"
         'sr only shown': "#sr-only-shown"
+        'hover': "#hover"
+        'hover content': "#hover-content"
         'overlay': "#overlay"
         'overlay trigger': "#overlay-trigger"
         'off-canvas overlay': "#overlay-off-canvas"
