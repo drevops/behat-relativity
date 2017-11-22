@@ -66,7 +66,7 @@ class BehatRelativityExtension implements ExtensionInterface
                 ->useAttributeAsKey('key')
                     ->info('Name of device or screen size.')
                     ->isRequired()
-                    ->arrayPrototype()
+                    ->prototype('array')
                         ->children()
                         ->integerNode('width')
                             ->info('Screen width.')
