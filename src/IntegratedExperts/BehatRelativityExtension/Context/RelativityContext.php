@@ -85,6 +85,8 @@ class RelativityContext extends RawMinkContext implements RelativityAwareContext
      *
      * @Given /^I am viewing the site on a ([a-zA-Z0-9\s,_]+) screen$/
      * @Given /^I am viewing the site on a ([a-zA-Z0-9\s,_]+) device$/
+     * @Given /^I am viewing the site on a "(?P<screen>[^"]*)" screen$/
+     * @Given /^I am viewing the site on a "(?P<screen>[^"]*)" device$/
      */
     public function iAmViewingTheSiteOnScreen($screen)
     {

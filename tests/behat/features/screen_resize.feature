@@ -182,6 +182,17 @@ Feature: Behat relative assertions work using breakpoints
     Then I save screenshot
 
   @javascript @phpserver
+  Scenario Outline: Scenario Outline can be used to resize screen.
+    Given I am viewing the site on a "<screen_size>" device
+    When I am on the test page
+    Then I see top above main
+    And I see bottom below main
+    Examples:
+      | screen_size   |
+      | desktop       |
+      | desktop_large |
+
+  @javascript @phpserver
   Scenario: Viewport size is calculated correctly when screen is resized.
     Given I am viewing the site on a desktop device
     When I am on the test page
