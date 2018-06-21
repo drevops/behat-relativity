@@ -15,7 +15,7 @@ default:
     Behat\MinkExtension:
       base_url: "http://localhost:8888/"
       browser_name: chrome
-      files_path: ./features/fixtures
+      files_path: ./fixtures
       default_session: selenium2
       goutte: ~
       selenium2:
