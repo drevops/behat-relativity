@@ -1,6 +1,4 @@
 vendor
-Vagrantfile
-.beetbox
 composer.lock
-.vagrant
 screenshots
+docker-compose.override.yml

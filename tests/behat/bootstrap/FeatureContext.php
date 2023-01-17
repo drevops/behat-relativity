@@ -23,6 +23,6 @@ class FeatureContext extends MinkContext implements SnippetAcceptingContext
      */
     public function goToTestPage()
     {
-        $this->getSession()->visit('http://localhost:8888/relative.html');
+        $this->getSession()->visit('http://phpserver:8888/relative.html');
     }
 }
