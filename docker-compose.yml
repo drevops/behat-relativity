@@ -1,0 +1,11 @@
+version: '2'
+services:
+  phpserver:
+    image: uselagoon/php-8.1-cli-drupal
+    volumes:
+      - .:/app:delegated
+    environment:
+      # To enable xdebug: XDEBUG_ENABLE=true docker-compose up -d phpserver
+      XDEBUG_ENABLE: ${XDEBUG_ENABLE:-}
+  chrome:
+    image: selenium/standalone-chrome

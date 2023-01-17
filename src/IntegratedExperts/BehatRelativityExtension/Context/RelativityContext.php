@@ -224,7 +224,7 @@ class RelativityContext extends RawMinkContext implements RelativityAwareContext
             }
         }
 
-        if (count($defaults) != 1) {
+        if (count($defaults) !== 1) {
             throw new RuntimeException(sprintf('One and only one of the provided breakpoints must be configured as default'));
         }
 
@@ -597,6 +597,9 @@ class RelativityContext extends RawMinkContext implements RelativityAwareContext
 
     /**
      * Check if two rectangles intersect.
+     *
+     * @return bool
+     *   TRUE if rectangles intersect, FALSE otherwise.
      */
     protected function rectanglesIntersect($x1, $y1, $width1, $height1, $x2, $y2, $width2, $height2)
     {
@@ -619,7 +622,7 @@ class RelativityContext extends RawMinkContext implements RelativityAwareContext
         $padding = $this->getSession()->getDriver()->evaluateScript("
             return {
                 w: window.outerWidth - window.innerWidth,
-                h: window.outerHeight - window.innerHeight 
+                h: window.outerHeight - window.innerHeight
             };
         ");
 
@@ -647,20 +650,20 @@ class RelativityContext extends RawMinkContext implements RelativityAwareContext
      */
     protected function getComponentGeometry($selector, $doScroll = true)
     {
-        $script = "return (function(el) { 
+        $script = "return (function(el) {
             if (el.length) {".($doScroll ? "jQuery(window).scrollTop(el.offset().top);" : "")."
-              function zIndex(el) { var z = 0; el.add(el.parents()).each(function () { if ((jQuery(this).css('position') == 'absolute') && jQuery(this).css('z-index') != 'auto') { z = parseInt(jQuery(this).css('z-index'), 10); } }); return z; }                    
-              if (el.is(':visible') && el.height() > 1 && !(el.css('clip') == 'rect(0px 0px 0px 0px)' && el.css('position') == 'absolute')){       
+              function zIndex(el) { var z = 0; el.add(el.parents()).each(function () { if ((jQuery(this).css('position') == 'absolute') && jQuery(this).css('z-index') != 'auto') { z = parseInt(jQuery(this).css('z-index'), 10); } }); return z; }
+              if (el.is(':visible') && el.height() > 1 && !(el.css('clip') == 'rect(0px 0px 0px 0px)' && el.css('position') == 'absolute')){
                 return {
                   width: el.outerWidth(),
                   height: el.outerHeight(),
-                  top: Math.ceil(el.offset().top),  
+                  top: Math.ceil(el.offset().top),
                   left: Math.ceil(el.offset().left),
                   zIndex: zIndex(el),
                   position: el.css('position')
                 };
               }
-            }  
+            }
             return false;
         })({{ELEMENT}});";
 
@@ -680,8 +683,8 @@ class RelativityContext extends RawMinkContext implements RelativityAwareContext
         $script = "return (function(el) {
             if (el.length) {
               return el.is(':focus');
-            }       
-            return false; 
+            }
+            return false;
         })({{ELEMENT}});";
 
         return $this->executeJsOnCss($selector, $script);
@@ -702,13 +705,13 @@ class RelativityContext extends RawMinkContext implements RelativityAwareContext
               jQuery(window).scrollTop(el.offset().top - {{OFFSET}});
               var rect = el.get(0).getBoundingClientRect();
               return el.is(':visible') && el.height() > 1 && !(el.css('clip') == 'rect(0px 0px 0px 0px)' && el.css('position') == 'absolute') && !(
-                rect.left + rect.width <= 0  
+                rect.left + rect.width <= 0
                 || rect.top + rect.height <= 0
-                || rect.left >= window.innerWidth 
+                || rect.left >= window.innerWidth
                 || rect.top >= window.innerHeight
               );
-            }       
-            return false; 
+            }
+            return false;
         })({{ELEMENT}});";
 
         return $this->executeJsOnCss($selector, $script);
@@ -734,13 +737,16 @@ class RelativityContext extends RawMinkContext implements RelativityAwareContext
 
     /**
      * Executes JS on an element provided by CSS.
+     *
+     * @return mixed
+     *   The result of JS script evaluation.
      */
     protected function executeJsOnCss($selector, $script)
     {
         // Inject style to disable browser scrollbars.
         $scriptWrapper = "return (function() {
-            if (jQuery('head #relative_style').length ==0) { 
-                jQuery('<style id=\"relative_style\" type=\"text/css\">::-webkit-scrollbar{display: none;}</style>').appendTo(jQuery('head')); 
+            if (jQuery('head #relative_style').length ==0) {
+                jQuery('<style id=\"relative_style\" type=\"text/css\">::-webkit-scrollbar{display: none;}</style>').appendTo(jQuery('head'));
             }
             {{SCRIPT}}
           }());

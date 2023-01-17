@@ -47,7 +47,7 @@ default:
       contexts:
         - IntegratedExperts\BehatRelativityExtension\Context\RelativityContext
         - FeatureContext
-    
+
   extensions:
     IntegratedExperts\BehatRelativityExtension:
       breakpoints:
@@ -75,20 +75,35 @@ default:
         'bottom': "#bottom"
 ```
 
-## Local development
-### Preparing local environment
-1. Install [Vagrant](https://www.vagrantup.com/downloads.html) and [VirtualBox](https://www.virtualbox.org/wiki/Downloads) and [Composer](https://getcomposer.org/).
-2. Install all dependencies: `composer install`
-3. Provision local VM: `vagrant up`
+## Maintenance
 
-### Running tests
+### Local development setup
+
+1. Install Docker.
+2. If using M1: `cp default.docker-compose.override.yml docker-compose.override.yml`
+3. Start environment: `docker-compose up -d --build`.
+4. Install dependencies: `docker-compose exec phpserver composer install --ansi --no-suggest`.
+
+### Lint code
+
 ```bash
-vagrant ssh
-scripts/selenium-install.sh
-scripts/selenium-start.sh
-composer test
+docker-compose exec phpserver vendor/bin/phpcs
 ```
-### Cleanup an environment
+
+### Run tests
+
 ```bash
-composer cleanup
+docker-compose exec phpserver vendor/bin/behat
+```
+
+### Enable Xdebug
+
+```bash
+XDEBUG_ENABLE=true docker-compose up -d phpserver
+```
+
+To disable, run
+
+```bash
+docker-compose up -d phpserver
 ```
