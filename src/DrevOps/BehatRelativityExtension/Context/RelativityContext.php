@@ -5,7 +5,7 @@
  * Relative components assertions.
  */
 
-namespace IntegratedExperts\BehatRelativityExtension\Context;
+namespace DrevOps\BehatRelativityExtension\Context;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;

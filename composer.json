@@ -1,5 +1,5 @@
 {
-    "name": "integratedexperts/behat-relativity",
+    "name": "drevops/behat-relativity",
     "description": "Behat context for relative elements testing.",
     "type": "library",
     "license": "GPL-2.0-or-later",
@@ -31,7 +31,7 @@
     },
     "autoload": {
         "psr-0": {
-            "IntegratedExperts\\BehatRelativityExtension": "src/"
+            "DrevOps\\BehatRelativityExtension": "src/"
         }
     },
     "scripts": {

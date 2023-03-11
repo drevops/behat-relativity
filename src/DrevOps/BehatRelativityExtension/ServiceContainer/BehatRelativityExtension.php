@@ -4,7 +4,7 @@
  * Behat relativity extension.
  */
 
-namespace IntegratedExperts\BehatRelativityExtension\ServiceContainer;
+namespace DrevOps\BehatRelativityExtension\ServiceContainer;
 
 use Behat\Behat\Context\ServiceContainer\ContextExtension;
 use Behat\Testwork\ServiceContainer\Extension as ExtensionInterface;
@@ -22,7 +22,7 @@ class BehatRelativityExtension implements ExtensionInterface
     /**
      * Extension configuration ID.
      */
-    const MOD_ID = 'integratedexperts_relativity';
+    const MOD_ID = 'drevops_relativity';
 
     /**
      * {@inheritdoc}
@@ -94,13 +94,13 @@ class BehatRelativityExtension implements ExtensionInterface
      */
     public function load(ContainerBuilder $container, array $config)
     {
-        $definition = new Definition('IntegratedExperts\BehatRelativityExtension\Context\Initializer\RelativityContextInitializer', [
+        $definition = new Definition('DrevOps\BehatRelativityExtension\Context\Initializer\RelativityContextInitializer', [
             $config['components'],
             $config['offset'],
             $config['breakpoints'],
             $config['jquery_version'],
         ]);
         $definition->addTag(ContextExtension::INITIALIZER_TAG, ['priority' => 0]);
-        $container->setDefinition('integratedexperts_relativity.relativity_context_initializer', $definition);
+        $container->setDefinition('drevops_relativity.relativity_context_initializer', $definition);
     }
 }
