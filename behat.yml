@@ -8,7 +8,7 @@ default:
             - docroot: "%paths.base%/tests/behat/fixtures"
               host: "phpserver"
         - DrevOps\BehatScreenshotExtension\Context\ScreenshotContext
-        - IntegratedExperts\BehatRelativityExtension\Context\RelativityContext
+        - DrevOps\BehatRelativityExtension\Context\RelativityContext
         - FeatureContext
 
   extensions:
@@ -25,7 +25,7 @@ default:
       dir: "%paths.base%/screenshots"
       fail: true
       purge: true
-    IntegratedExperts\BehatRelativityExtension:
+    DrevOps\BehatRelativityExtension:
       breakpoints:
         mobile:
           width: 320

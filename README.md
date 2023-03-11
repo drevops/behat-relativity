@@ -36,7 +36,7 @@ Feature: Google example test
 ```
 
 ## Installation
-`composer require --dev integratedexperts/behat-relativity`
+`composer require --dev drevops/behat-relativity`
 
 ## usage
 Example `behat.yml`:
@@ -45,11 +45,11 @@ default:
   suites:
     default:
       contexts:
-        - IntegratedExperts\BehatRelativityExtension\Context\RelativityContext
+        - DrevOps\BehatRelativityExtension\Context\RelativityContext
         - FeatureContext
 
   extensions:
-    IntegratedExperts\BehatRelativityExtension:
+    DrevOps\BehatRelativityExtension:
       breakpoints:
         mobile:
           width: 320
