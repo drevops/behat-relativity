@@ -1,10 +1,10 @@
 # behat-relativity
 Behat context for relative elements testing
 
-[![CircleCI](https://circleci.com/gh/integratedexperts/behat-relativity.svg?style=shield)](https://circleci.com/gh/integratedexperts/behat-relativity)
-[![Latest Stable Version](https://poser.pugx.org/integratedexperts/behat-relativity/v/stable)](https://packagist.org/packages/integratedexperts/behat-relativity)
-[![Total Downloads](https://poser.pugx.org/integratedexperts/behat-relativity/downloads)](https://packagist.org/packages/integratedexperts/behat-relativity)
-[![License](https://poser.pugx.org/integratedexperts/behat-relativity/license)](https://packagist.org/packages/integratedexperts/behat-relativity)
+[![CircleCI](https://circleci.com/gh/drevops/behat-relativity.svg?style=shield)](https://circleci.com/gh/drevops/behat-relativity)
+[![Latest Stable Version](https://poser.pugx.org/drevops/behat-relativity/v/stable)](https://packagist.org/packages/drevops/behat-relativity)
+[![Total Downloads](https://poser.pugx.org/drevops/behat-relativity/downloads)](https://packagist.org/packages/drevops/behat-relativity)
+[![License](https://poser.pugx.org/drevops/behat-relativity/license)](https://packagist.org/packages/drevops/behat-relativity)
 
 ## What is this?
 This extension allows to test visual elements positioning on the page relatively to each other. Such tests are dead-simple to write, but they can capture potential issues when developing features on existing project.
