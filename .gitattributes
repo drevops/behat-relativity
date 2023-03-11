@@ -1,5 +1,7 @@
-.gitattributes       export-ignore
 .circleci            export-ignore
+.editorconfig        export-ignore
+.gitattributes       export-ignore
+.github/FUNDING.yml  export-ignore
 tests                export-ignore
 behat.yml            export-ignore
 docker-compose.yml   export-ignore
